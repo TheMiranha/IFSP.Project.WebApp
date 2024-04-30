@@ -4,11 +4,110 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL")
+  url      = env("POSTGRES_PRISMA_URL")
 }
 
 model Profile {
-  id         String         @id @default(uuid())
+  id      String @id @default(uuid())
+  clerkId String @unique
+
+  ownedRooms   Room[]
+  profileRooms ProfileRoom[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfileRoom {
+  id     String @id @default(uuid())
+  wallet Int
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  items ProfileRoomItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfileRoomItem {
+  id String @id @default(uuid())
+
+  profileRoomId String
+  profileRoom   ProfileRoom @relation(fields: [profileRoomId], references: [id])
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id    String @unique @default(uuid())
+  price Int
+
+  eItemid String
+  eItem   EItem  @relation(fields: [eItemid], references: [id])
+
+  itemAttributes   ItemAttribute[]
+  profilesRoomItem ProfileRoomItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ItemAttribute {
+  id String @unique @default(uuid())
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  eAttributeId String
+  eAttribute   EAttribute @relation(fields: [eAttributeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EItem {
+  id       String @unique @default(uuid())
+  name     String
+  imageUrl String
+  price    Int
+
+  items Item[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EAttribute {
+  id       String @unique @default(uuid())
+  name     String
+  iconName String
+  points   Int
+
+  itemAttributes ItemAttribute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Room {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  iconName    String?
+
+  ownerId String
+  owner   Profile @relation(fields: [ownerId], references: [id])
+
+  profilesRoom ProfileRoom[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

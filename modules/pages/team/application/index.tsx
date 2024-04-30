@@ -14,7 +14,8 @@ export function TeamPage() {
           <CardHeader>
             <HoverCard>
               <HoverCardTrigger>
-                <CardDescription className='cursor-default'>
+                <CardDescription className='cursor-default relative'>
+                  <div className='absolute text-xs z-20 bg-primary rounded-full p-1 text-white -top-3 -left-3'>20</div>
                   <Avatar>
                     <AvatarImage src='https://github.com/themiranha.png' />
                     <AvatarFallback>LM</AvatarFallback>
