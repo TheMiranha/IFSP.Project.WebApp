@@ -10,18 +10,21 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command"
-import { CalendarDaysIcon, CalendarIcon, ComputerIcon, KanbanIcon, LayoutDashboardIcon, MoonStarIcon, StoreIcon, SunIcon, UserIcon, UsersIcon } from "lucide-react"
+import { CalendarDaysIcon, CalendarIcon, ComputerIcon, GraduationCapIcon, KanbanIcon, LayoutDashboardIcon, MoonStarIcon, StoreIcon, SunIcon, UserIcon, UsersIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useRoom } from "@/modules/room/application/store/room"
 
 export function SearchAll() {
 
   const { open, setOpen } = useSearchAll()
   const { theme, setTheme } = useTheme()
+  const { setOpenDialog: setOpenRoomDialog } = useRoom()
 
   useEffect(() => {
     const handleEvent = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey || e.altKey)) {
+        e.preventDefault()
         setOpen(true)
       }
     }
@@ -40,6 +43,13 @@ export function SearchAll() {
         <ScrollArea className='h-[300px]'>
           <CommandEmpty>Nenhum resultado encontrado</CommandEmpty>
           <CommandGroup heading="Sugestões">
+            <CommandItem onSelect={() => {
+              setOpen(false)
+              setOpenRoomDialog(true)
+            }}>
+              <GraduationCapIcon className="mr-2 size-6" />
+              <span>Suas turmas</span>
+            </CommandItem>
             <CommandItem>
               <LayoutDashboardIcon className="mr-2 size-6" />
               <span>Dashboard</span>
