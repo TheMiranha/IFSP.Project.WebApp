@@ -55,7 +55,6 @@ export function AuthSignUpForm({ setLoading }: { setLoading: (e: boolean) => voi
     })
 
     // redirecionamento forçado ( sem utilização de hooks )
-    setLoading(false)
     window.location.href = '/dashboard'
   }
 

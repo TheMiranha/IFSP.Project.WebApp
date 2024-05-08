@@ -1,7 +1,7 @@
-import { Room } from "@prisma/client"
+import { ProfileRoom, Room } from "@prisma/client"
 import { create } from "zustand"
+import { ComplexRoom } from "../../domain/types"
 
-type CurrentRoom = null | { roomId: string, profileRoomId: string }
 
 type Store = {
   openRoomsTableDialog: boolean
@@ -10,11 +10,11 @@ type Store = {
   openCreateRoomDialog: boolean
   setOpenCreateRoomDialog: (e: boolean) => void
 
-  rooms: Room[]
-  setRooms: (e: Room[]) => void
+  rooms: ComplexRoom[]
+  setRooms: (e: ComplexRoom[]) => void
 
-  currentRoom: CurrentRoom
-  setCurrentRoom: (e: CurrentRoom) => void
+  currentRoom: ComplexRoom | null
+  setCurrentRoom: (e: ComplexRoom | null) => void
 }
 
 export const useRoom = create<Store>((set) => ({
@@ -25,8 +25,8 @@ export const useRoom = create<Store>((set) => ({
   setOpenCreateRoomDialog: (e: boolean) => set({ openCreateRoomDialog: e }),
 
   rooms: [],
-  setRooms: (e: Room[]) => set({ rooms: e }),
+  setRooms: (e: ComplexRoom[]) => set({ rooms: e }),
 
   currentRoom: null,
-  setCurrentRoom: (e: CurrentRoom) => set({ currentRoom: e })
+  setCurrentRoom: (e: ComplexRoom | null) => set({ currentRoom: e })
 }))

@@ -67,10 +67,6 @@ export function SearchAll() {
               <span>Itens</span>
             </CommandItem>
             <CommandItem>
-              <UsersIcon className="mr-2 size-6" />
-              <span>Sua turma</span>
-            </CommandItem>
-            <CommandItem>
               <UserIcon className="mr-2 size-6" />
               <span>Perfil</span>
             </CommandItem>

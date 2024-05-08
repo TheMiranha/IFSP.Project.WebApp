@@ -51,9 +51,9 @@ export function AuthPage() {
         <CardHeader className='space-y-5'>
           <CardTitle>Autenticação</CardTitle>
           <CardDescription className='items-center justify-center'>
-            <Button variant='outline' onClick={handleGithubLogin}>
+            {/* <Button variant='outline' onClick={handleGithubLogin}>
               <Github />
-            </Button>
+            </Button> */}
           </CardDescription>
         </CardHeader>
         {

@@ -6,7 +6,9 @@ const isProtectedRoute = createRouteMatcher([
   "/kanban(.*)",
   "/store(.*)",
   "/team(.*)",
-  "/setup(.*)"
+  "/setup(.*)",
+  "/api/rooms(.*)",
+  "/api/rooms/(.*)"
 ]);
 
 export default clerkMiddleware((auth, req) => {

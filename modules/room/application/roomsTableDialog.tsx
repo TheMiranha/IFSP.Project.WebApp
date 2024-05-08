@@ -4,17 +4,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useRoom } from "./store/room"
 import { ArrowRightIcon, GraduationCapIcon, PlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import Icon from "@/components/icon"
+import { ComplexRoom } from "../domain/types"
 
 export const RoomsTableDialog = () => {
 
-  const { openRoomsTableDialog, setOpenRoomsTableDialog, rooms, setOpenCreateRoomDialog } = useRoom()
+  const { setCurrentRoom, openRoomsTableDialog, setOpenRoomsTableDialog, rooms, setOpenCreateRoomDialog } = useRoom()
 
   const handleCreate = () => {
     setOpenRoomsTableDialog(false)
     setOpenCreateRoomDialog(true)
+  }
+
+  const handleRoomSelect = (complexRoom: ComplexRoom) => {
+    setOpenRoomsTableDialog(false)
+    setCurrentRoom(complexRoom)
   }
 
   const EmptyRooms = () => {
@@ -38,8 +45,8 @@ export const RoomsTableDialog = () => {
   }
 
   return (
-    <Dialog open={openRoomsTableDialog} onOpenChange={setOpenRoomsTableDialog}>
-      <DialogContent>
+    <Dialog open={openRoomsTableDialog} onOpenChange={rooms.length > 0 ? setOpenRoomsTableDialog : () => { }}>
+      <DialogContent className='max-w-[98dvw]'>
         <DialogHeader>
           <DialogTitle>
             <div className='flex items-center gap-2'>
@@ -66,6 +73,22 @@ export const RoomsTableDialog = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+                  {
+                    rooms.map(complexRoom => (
+                      <TableRow key={complexRoom.room.id}>
+                        <TableCell>
+                          {complexRoom.room.id}
+                        </TableCell>
+                        <TableCell className='flex items-center gap-2'>
+                          <Icon name={complexRoom.room.iconName} />
+                          {complexRoom.room.name}
+                        </TableCell>
+                        <TableCell>
+                          <Button variant='outline' onClick={() => handleRoomSelect(complexRoom)}>Acessar</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  }
                 </TableBody>
               </Table>
             )

@@ -1,10 +1,11 @@
 import { Icons } from "@/components/icon"
-import { Room } from "@prisma/client"
+import { ProfileRoom, Room } from "@prisma/client"
+import { ComplexRoom } from "./types"
 
 export type GetUserRooms = {
   response: {
-    rooms: Room[]
-  }
+    rooms: ComplexRoom[]
+  },
 }
 
 export type CreateRoom = {
@@ -15,8 +16,8 @@ export type CreateRoom = {
   }
   response: {
     success: boolean
-    roomId: string
-    profileRoomId: string
+    room: Room
+    profileRoom: ProfileRoom
   }
 }
 

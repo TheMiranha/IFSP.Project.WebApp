@@ -15,7 +15,7 @@ export type CurrentAccount = {
   response: {
     profileId: string,
     clerkId: string
-  }
+  },
 }
 
 export type WithAuthModuleOutputs<T> = { authOutputs: AuthModuleOutputs } & T

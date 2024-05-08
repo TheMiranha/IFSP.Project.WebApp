@@ -18,10 +18,25 @@ export class SSRRoom implements IRoomOutputs {
       }
     })
 
-    return { rooms: rooms }
+    const response: GetUserRooms['response']['rooms'] = []
+    for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
+      const profileRoom = await db.profileRoom.findFirst({
+        where: {
+          roomId: rooms[roomIndex].id,
+          profileId: profileId
+        }
+      })
+      if (profileRoom) {
+        response.push({ profileRoom, room: rooms[roomIndex] })
+      }
+    }
+
+
+    return { rooms: response }
   }
 
   async createRoom({ description, iconName, name }: CreateRoom['props']): Promise<CreateRoom['response']> {
+
     const { profileId } = await currentAccount()
 
     const createdRoom = await db.room.create({
@@ -50,8 +65,8 @@ export class SSRRoom implements IRoomOutputs {
 
     return {
       success: true,
-      profileRoomId: profileRoom.id,
-      roomId: createdRoom.id
+      profileRoom,
+      room: createdRoom,
     }
 
   }

@@ -1,15 +1,16 @@
-import { icons } from 'lucide-react';
+import { icons, LucideIcon } from 'lucide-react';
 
 export type Icons = keyof (typeof icons)
 
 type IconProps = {
-  name: keyof (typeof icons)
+  name: keyof (typeof icons) | string
   color?: string | undefined
   size?: string | number | undefined
 }
 
 const Icon = ({ name, color, size }: IconProps) => {
-  const LucideIcon = icons[name];
+  // @ts-ignore
+  const LucideIcon = (icons[name] as LucideIcon);
 
   return <LucideIcon color={color} size={size} />;
 };

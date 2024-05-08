@@ -1,11 +1,8 @@
 import { getUserRooms } from "@/modules/room/domain/room.actions"
+import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
-async function handler() {
+export async function GET() {
   const response = await getUserRooms()
   return NextResponse.json(response)
-}
-
-export {
-  handler as GET
 }
