@@ -19,7 +19,7 @@ export function SearchAll() {
 
   const { open, setOpen } = useSearchAll()
   const { theme, setTheme } = useTheme()
-  const { setOpenDialog: setOpenRoomDialog } = useRoom()
+  const { setOpenRoomsTableDialog: setOpenRoomDialog } = useRoom()
 
   useEffect(() => {
     const handleEvent = (e: KeyboardEvent) => {

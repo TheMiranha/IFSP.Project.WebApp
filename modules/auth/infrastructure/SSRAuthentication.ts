@@ -1,7 +1,7 @@
-import { AuthModuleOutputs, CreateAccount } from "../domain/auth.outputs";
-import { clerkClient } from "@clerk/nextjs/server";
+import { AuthModuleOutputs, CreateAccount, CurrentAccount } from "../domain/auth.outputs";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { ptBR } from "../domain/ptBR";
-import { db } from "@/lib/db"
+import { db } from "@/lib/db";
 
 export class SSRAuthentication implements AuthModuleOutputs {
   async createAccount({
@@ -34,6 +34,30 @@ export class SSRAuthentication implements AuthModuleOutputs {
         "Email já utilizado anteriormente.";
       return { success: false, error: { message: errorMessage } };
     }
+  }
+
+  async currentAccount(): Promise<CurrentAccount['response']> {
+
+    const clerkUser = await currentUser()
+    if (!clerkUser) {
+      throw new Error('User is not signed')
+    }
+
+    const profile = await db.profile.findUnique({
+      where: {
+        clerkId: clerkUser.id
+      }
+    })
+
+    if (!profile) {
+      throw new Error('Profile was not created ( clerkID: ' + clerkUser.id + ' )')
+    }
+
+    return {
+      profileId: profile.id,
+      clerkId: clerkUser.id
+    }
+
   }
 
 }

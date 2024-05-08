@@ -40,6 +40,7 @@ export function AuthSignUpForm({ setLoading }: { setLoading: (e: boolean) => voi
     setLoading(true)
     const response = await createAccount(values)
     if (response.error) {
+      setLoading(false)
       return toast({
         title: 'Ocorreu um erro!',
         description: response.error.message,

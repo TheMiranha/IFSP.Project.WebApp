@@ -11,8 +11,16 @@ export type CreateAccount = {
   }
 }
 
+export type CurrentAccount = {
+  response: {
+    profileId: string,
+    clerkId: string
+  }
+}
+
 export type WithAuthModuleOutputs<T> = { authOutputs: AuthModuleOutputs } & T
 
 export interface AuthModuleOutputs {
   createAccount(props: CreateAccount['props']): Promise<CreateAccount['response']>
+  currentAccount(): Promise<CurrentAccount['response']>
 }

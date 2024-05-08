@@ -21,7 +21,6 @@ const formSchema = z.object({
 export function AuthSignInForm({ setLoading }: { setLoading: (e: boolean) => void }) {
 
   const { signIn } = useSignIn()
-  const { signOut } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,7 +32,7 @@ export function AuthSignInForm({ setLoading }: { setLoading: (e: boolean) => voi
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true)
-    await signIn?.create({
+    const signInResponse = await signIn?.create({
       identifier: values.email,
       password: values.password,
       strategy: 'password'
@@ -50,10 +49,10 @@ export function AuthSignInForm({ setLoading }: { setLoading: (e: boolean) => voi
           });
         }
       })
-      .then(() => {
-        // redirecionamento forçado ( sem utilização de hooks )
-        window.location.href = '/dashboard'
-      })
+
+    if (signInResponse?.status === 'complete') {
+      window.location.href = '/dashboard'
+    }
   }
 
   return (

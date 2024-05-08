@@ -1,42 +1,32 @@
 'use client'
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useRoom } from "./store/room"
-import { GraduationCapIcon, PlusIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useEffect } from "react"
+import { getUserRooms } from "../domain/room.actions"
+import { RoomsTableDialog } from "./roomsTableDialog"
+import { CreateRoomDialog } from "./createRoomDialog"
 
 export function RoomDialog() {
 
-  const { openDialog, setOpenDialog } = useRoom()
+  const { setOpenRoomsTableDialog, setRooms } = useRoom()
+
+  const loadRooms = async () => {
+    const response = await getUserRooms()
+    setRooms(response.rooms)
+    if (response.rooms.length === 0) {
+      setOpenRoomsTableDialog(true)
+    }
+  }
+
+  useEffect(() => {
+    loadRooms()
+  }, [])
 
   return (
-    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle><GraduationCapIcon /> Suas turmas</DialogTitle>
-        </DialogHeader>
-        <div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Código</TableHead>
-                <TableHead>Nome</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>MAT</TableCell>
-                <TableCell>Matemática discreta</TableCell>
-                <TableCell>
-                  <Button variant='outline'>Acessar turma</Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <>
+      <RoomsTableDialog />
+      <CreateRoomDialog />
+    </>
   )
+
 }

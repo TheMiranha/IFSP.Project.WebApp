@@ -25,7 +25,7 @@ export function AuthPage() {
     if (isLoaded && isSignedIn) {
       router.push('/dashboard')
     }
-  }, [isSignedIn, isLoaded])
+  }, [isSignedIn, isLoaded, router])
 
   const handleGithubLogin = async () => {
     await signIn?.authenticateWithRedirect({
@@ -33,9 +33,9 @@ export function AuthPage() {
       redirectUrlComplete: '/dashboard',
       strategy: 'oauth_github',
     }).then(res => {
-      console.log(res)
+      console.log('Sucesso na autenticação oauth')
     }).catch(error => {
-      console.log(error)
+      console.log('Ocorreu um erro')
     })
   }
 
