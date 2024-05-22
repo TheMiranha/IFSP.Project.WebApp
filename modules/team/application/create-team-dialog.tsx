@@ -87,7 +87,7 @@ export function CreateTeamDialog() {
     return currentRoom?.room?.profilesRoom?.find(profileRoom => {
       return profileRoom.id === form.getValues('leaderId')
     })
-  }, [form, currentRoom])
+  }, [currentRoom, openLeaderPopover])
 
 
   return (
