@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
+model Profile {
+  id      String @id @default(uuid())
+  clerkId String @unique
+
+  profileRooms ProfileRoom[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfileRoom {
+  id     String   @id @default(uuid())
+  wallet Int
+  role   ROOMROLE
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  items ProfileRoomItem[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  teamProfile TeamProfile[]
+}
+
+model ProfileRoomItem {
+  id String @id @default(uuid())
+
+  profileRoomId String
+  profileRoom   ProfileRoom @relation(fields: [profileRoomId], references: [id])
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id    String @unique @default(uuid())
+  price Int
+
+  eItemid String
+  eItem   EItem  @relation(fields: [eItemid], references: [id])
+
+  itemAttributes   ItemAttribute[]
+  profilesRoomItem ProfileRoomItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ItemAttribute {
+  id String @unique @default(uuid())
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  eAttributeId String
+  eAttribute   EAttribute @relation(fields: [eAttributeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EItem {
+  id       String @unique @default(uuid())
+  name     String
+  imageUrl String
+  price    Int
+
+  items Item[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EAttribute {
+  id       String @unique @default(uuid())
+  name     String
+  iconName String
+  points   Int
+
+  itemAttributes ItemAttribute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Room {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  iconName    String
+  shareCode String
+  disableShareCode Boolean @default(false)
+
+  profilesRoom ProfileRoom[]
+  teams        Team[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Team {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  iconName String
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  members TeamProfile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TeamProfile {
+  id   String   @id @default(uuid())
+  role TEAMROLE
+
+  profileRoomId String
+  profileRoom   ProfileRoom @relation(fields: [profileRoomId], references: [id])
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ROOMROLE {
+  MEMBER
+  OWNER
+}
+
+enum TEAMROLE {
+  MEMBER
+  LEADER
+  OWNER
+}

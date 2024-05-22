@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/apps/projeto_ic/postgresql:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=projeto_ic
+      - POSTGRES_USER=projeto_ic
+      - POSTGRES_DB=projeto_ic
