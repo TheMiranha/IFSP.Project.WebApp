@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { CreateRoom, GetUserRooms, IRoomOutputs } from "../domain/room.outputs";
 import { currentAccount, getAuthData } from "@/modules/auth/domain/auth.actions";
+import { ProfileRoom } from "@prisma/client";
+import { WithProfile } from "../domain/types";
 
 export class SSRRoom implements IRoomOutputs {
 
@@ -92,10 +94,17 @@ export class SSRRoom implements IRoomOutputs {
       throw new Error('Fail on create profileRoom')
     }
 
+    const returnedProfileRoom = (await db.profileRoom.findFirst({ where: { id: profileRoom.id }, include: { profile: true } })) as WithProfile<ProfileRoom>
+
     return {
       success: true,
-      profileRoom,
-      room: createdRoom,
+      room: {
+        room: {
+          ...createdRoom,
+          profilesRoom: [returnedProfileRoom]
+        },
+        profileRoom
+      },
     }
 
   }

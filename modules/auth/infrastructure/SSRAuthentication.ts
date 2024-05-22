@@ -37,11 +37,8 @@ export class SSRAuthentication implements AuthModuleOutputs {
   }
 
   async createGithubProfile(): Promise<CreateGithubProfile['response']> {
-    console.log('createGithubProfile')
     const clerkUser = auth()
-    console.log(clerkUser)
     if (!clerkUser || !clerkUser.userId) {
-      console.log('Usuário não autenticado')
       return {
         success: false,
         error: {
@@ -49,9 +46,6 @@ export class SSRAuthentication implements AuthModuleOutputs {
         }
       }
     }
-
-    console.log('clerkUser.userId')
-    console.log(clerkUser.userId)
 
     const clerkId = clerkUser.userId
 

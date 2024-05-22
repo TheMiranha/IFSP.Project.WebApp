@@ -84,7 +84,7 @@ export function CreateTeamDialog() {
   }, [openCreateTeamDialog, form])
 
   const selectedLeader = useMemo(() => {
-    return currentRoom?.room.profilesRoom.find(profileRoom => {
+    return currentRoom?.room?.profilesRoom?.find(profileRoom => {
       return profileRoom.id === form.getValues('leaderId')
     })
   }, [form, currentRoom])

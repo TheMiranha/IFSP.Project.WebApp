@@ -34,13 +34,12 @@ export function AuthPage() {
       redirectUrlComplete: '/dashboard',
       strategy: 'oauth_github',
     }).then(async (res) => {
-      console.log(res)
+
       const internalResponse = await createGithubProfile()
-      console.log('internalResponse')
-      console.log(internalResponse)
       if (internalResponse.success) {
         window.location.href = '/dashboard'
       }
+
     }).catch(error => {
       console.log('Ocorreu um erro')
     })

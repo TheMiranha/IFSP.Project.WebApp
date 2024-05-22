@@ -51,10 +51,7 @@ export const CreateRoomDialog = () => {
     const response = await createRoom(payload)
     if (response.success) {
 
-      const complexRoom = {
-        room: response.room,
-        profileRoom: response.profileRoom
-      }
+      const complexRoom = { room: response.room.room, profileRoom: response.room.profileRoom }
 
       setCurrentRoom(complexRoom)
 

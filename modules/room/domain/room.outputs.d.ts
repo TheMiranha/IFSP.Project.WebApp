@@ -16,8 +16,7 @@ export type CreateRoom = {
   }
   response: {
     success: boolean
-    room: Room
-    profileRoom: ProfileRoom
+    room: ComplexRoom
   }
 }
 
