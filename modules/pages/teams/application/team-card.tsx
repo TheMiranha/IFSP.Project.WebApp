@@ -4,6 +4,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Label } from "@/components/ui/label"
 import { ComplexTeam } from "@/modules/team/domain/types"
+import { getNameByAuthUser } from "@/modules/user/application/utils"
 import { ArrowRight } from "lucide-react"
 
 type TeamCardProps = {
@@ -35,7 +36,7 @@ export const TeamCard = ({ team }: TeamCardProps) => {
                       <AvatarImage src={member.profileRoom.profile.authData.imageUrl} />
                     </Avatar>
                     <Label>
-                      {member.profileRoom.profile.authData.firstName || ''} {member.profileRoom.profile.authData.lastName || ''}
+                      {getNameByAuthUser(member.profileRoom.profile.authData)}
                     </Label>
                   </div>
                 ))

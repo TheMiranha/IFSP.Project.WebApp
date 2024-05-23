@@ -19,6 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { icons } from "lucide-react"
 import { useRoom } from "@/modules/room/application/store/room";
 import { createTeam } from "../domain/team.actions";
+import { getNameByAuthUser } from "@/modules/user/application/utils";
 
 const formSchema = z.object({
   name: z.string().min(3).max(25),
@@ -38,9 +39,9 @@ export function CreateTeamDialog() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: 'Equipe A',
-      description: 'Pesquisa sobre sistema neurológico',
-      iconName: 'BrainCircuit'
+      name: '',
+      description: '',
+      iconName: ''
     }
   })
 
@@ -68,7 +69,7 @@ export function CreateTeamDialog() {
 
     toast({
       title: 'Sucesso!',
-      description: 'Turma "' + data.name + '" foi criada.'
+      description: 'Equipe "' + data.name + '" foi criada.'
     })
 
     setOpenCreateTeamDialog(false)
@@ -216,7 +217,7 @@ export function CreateTeamDialog() {
                               {field.value
                                 ? <>
                                   {
-                                    `${selectedLeader?.profile.authData.firstName || ''}  ${selectedLeader?.profile.authData.lastName || ''}`
+                                    selectedLeader?.profile.authData && `${getNameByAuthUser(selectedLeader?.profile.authData)}`
                                   }
                                 </>
                                 : 'Selecione um líder'}
@@ -241,7 +242,7 @@ export function CreateTeamDialog() {
                                       }}
                                     >
                                       {
-                                        `${profileRoom.profile.authData.firstName || ''} ${profileRoom.profile.authData.lastName || ''}`
+                                        getNameByAuthUser(profileRoom.profile.authData)
                                       }
                                     </CommandItem>
                                   ))
