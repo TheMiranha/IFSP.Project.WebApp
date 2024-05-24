@@ -10,11 +10,13 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command"
-import { CalendarDaysIcon, CalendarIcon, ComputerIcon, GraduationCapIcon, KanbanIcon, LayoutDashboardIcon, LogOut, MoonStarIcon, StoreIcon, SunIcon, UserIcon, UsersIcon } from "lucide-react"
+import { CalendarDaysIcon, GraduationCapIcon, KanbanIcon, LayoutDashboardIcon, LogOut, MoonStarIcon, StoreIcon, SunIcon, UserIcon, UsersIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRoom } from "@/modules/room/application/store/room"
 import { useAuth } from "@/modules/auth/application/hooks/useAuth"
+import { useRouter } from "next/navigation"
+import { useLoading } from "@/modules/loading/application/store/loading"
 
 export function SearchAll() {
 
@@ -22,6 +24,8 @@ export function SearchAll() {
   const { theme, setTheme } = useTheme()
   const { setOpenRoomsTableDialog: setOpenRoomDialog } = useRoom()
   const { signOut } = useAuth()
+  const router = useRouter()
+  const { setActive } = useLoading()
 
   useEffect(() => {
     const handleEvent = (e: KeyboardEvent) => {
@@ -36,10 +40,18 @@ export function SearchAll() {
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark')
+    setOpen(false)
   }
 
   const handleSignOut = () => {
+    setOpen(false)
+    setActive(true)
     signOut()
+  }
+
+  const handleRedirect = (url: string) => {
+    setOpen(false)
+    router.push(url)
   }
 
   return (
@@ -56,19 +68,23 @@ export function SearchAll() {
               <GraduationCapIcon className="mr-2 size-6" />
               <span>Suas turmas</span>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => handleRedirect('/teams')}>
+              <UsersIcon className="mr-2 size-6" />
+              <span>Equipes</span>
+            </CommandItem>
+            <CommandItem onSelect={() => handleRedirect('/dashboard')}>
               <LayoutDashboardIcon className="mr-2 size-6" />
               <span>Dashboard</span>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => handleRedirect('/kanban')}>
               <KanbanIcon className="mr-2 size-6" />
               <span>Kanban</span>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => handleRedirect('/calendar')}>
               <CalendarDaysIcon className="mr-2 size-6" />
               <span>Calendário</span>
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => handleRedirect('/store')}>
               <StoreIcon className="mr-2 size-6" />
               <span>Itens</span>
             </CommandItem>

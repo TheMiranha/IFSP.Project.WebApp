@@ -19,6 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { createRoom } from "../domain/room.actions"
 import { CreateRoom } from "../domain/room.outputs"
 import { toast } from "@/components/ui/use-toast"
+import { useLoading } from "@/modules/loading/application/store/loading"
 
 const formSchema = z.object({
   name: z.string().min(3).max(20),
@@ -30,7 +31,7 @@ const iconsList = Object.keys(icons) as Icons[]
 
 export const CreateRoomDialog = () => {
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const { active, setActive } = useLoading()
 
   const { rooms, openCreateRoomDialog, setRooms, setOpenCreateRoomDialog, setCurrentRoom } = useRoom()
   const [openIconPopover, setOpenIconPopover] = useState<boolean>(false)
@@ -45,7 +46,7 @@ export const CreateRoomDialog = () => {
   })
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true)
+    setActive(true)
     setOpenCreateRoomDialog(false)
     const payload = values as CreateRoom['props']
     const response = await createRoom(payload)
@@ -57,26 +58,20 @@ export const CreateRoomDialog = () => {
 
       setRooms([...rooms, complexRoom])
 
-      setLoading(false)
+      setActive(false)
       setOpenCreateRoomDialog(false)
     } else {
       toast({
         title: 'Ocorreu um erro!',
         variant: 'destructive'
       })
-      setLoading(false)
+      setActive(false)
     }
   }
 
   return (
     <>
-      {
-        loading && (
-          <div className='absolute h-[100dvh] w-[100dvw] bg-gray-100 bg-opacity-50 top-0 left-0 z-20'>
-          </div>
-        )
-      }
-      <Dialog open={openCreateRoomDialog} onOpenChange={loading ? () => { } : setOpenCreateRoomDialog}>
+      <Dialog open={openCreateRoomDialog} onOpenChange={active ? () => { } : setOpenCreateRoomDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>

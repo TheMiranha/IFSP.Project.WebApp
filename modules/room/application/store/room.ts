@@ -5,9 +5,6 @@ import { ComplexRoom } from "../../domain/types"
 
 type Store = {
 
-  loading: boolean
-  setLoading: (e: boolean) => void
-
   openRoomsTableDialog: boolean
   setOpenRoomsTableDialog: (e: boolean) => void
 
@@ -22,9 +19,6 @@ type Store = {
 }
 
 export const useRoom = create<Store>((set) => ({
-
-  loading: true,
-  setLoading: e => set({ loading: e }),
 
   openRoomsTableDialog: false,
   setOpenRoomsTableDialog: (e: boolean) => set({ openRoomsTableDialog: e }),

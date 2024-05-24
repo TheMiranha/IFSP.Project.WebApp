@@ -10,10 +10,13 @@ import { Input } from "@/components/ui/input"
 import Icon from "@/components/icon"
 import { ComplexRoom } from "../domain/types"
 import { cn } from "@/lib/utils"
+import { useLoading } from "@/modules/loading/application/store/loading"
+import { CopyToClipboardContainer } from "@/lib/hooks/useCopyToClipboard"
 
 export const RoomsTableDialog = () => {
 
   const { setCurrentRoom, openRoomsTableDialog, setOpenRoomsTableDialog, rooms, setOpenCreateRoomDialog } = useRoom()
+  const { active } = useLoading()
 
   const handleCreate = () => {
     setOpenRoomsTableDialog(false)
@@ -46,7 +49,7 @@ export const RoomsTableDialog = () => {
   }
 
   return (
-    <Dialog open={openRoomsTableDialog} onOpenChange={rooms.length > 0 ? setOpenRoomsTableDialog : () => { }}>
+    <Dialog open={openRoomsTableDialog && !active} onOpenChange={rooms.length > 0 ? setOpenRoomsTableDialog : () => { }}>
       <DialogContent className={cn(rooms.length > 0 && 'max-w-[90dvw] w-[1024px]')}>
         <DialogHeader>
           <DialogTitle>
@@ -78,15 +81,20 @@ export const RoomsTableDialog = () => {
                     rooms.map(complexRoom => (
                       <TableRow key={complexRoom.room.id}>
                         <TableCell>
-                          <Button variant='ghost'>
-                            {complexRoom.room.id}
-                          </Button>
+                          <CopyToClipboardContainer content={complexRoom.room.id} title='Código de sala copiado!'>
+                            <Button variant='ghost'>
+                              {complexRoom.room.id}
+                            </Button>
+                          </CopyToClipboardContainer>
                         </TableCell>
                         <TableCell className='flex items-center gap-2'>
-                          <Button variant='ghost'>
-                            <Icon name={complexRoom.room.iconName} />
-                            {complexRoom.room.name}
-                          </Button>
+
+                          <CopyToClipboardContainer content={complexRoom.room.name} title='Nome de sala copiado!'>
+                            <Button variant='ghost'>
+                              <Icon name={complexRoom.room.iconName} />
+                              {complexRoom.room.name}
+                            </Button>
+                          </CopyToClipboardContainer>
                         </TableCell>
                         <TableCell>
                           <Button variant='outline' onClick={() => handleRoomSelect(complexRoom)}>Acessar</Button>

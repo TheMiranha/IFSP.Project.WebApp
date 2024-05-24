@@ -2,9 +2,10 @@
 
 import { ContainerHeight } from "@/modules/container/application";
 import { ScrollableHeight } from "@/modules/container/application/scrollable-height";
+import { LoadingModuleProvider } from "@/modules/loading/application/provider";
 import { Sidebar } from "@/modules/navigation/application/sidebar";
 import { Topbar } from "@/modules/navigation/application/topbar";
-import { NoRoomSelected } from "@/modules/room/application/noRoomSelected";
+import { NoRoomSelected } from "@/modules/room/application/no-room-selected";
 import { RoomModuleProvider } from "@/modules/room/application/provider";
 import { useRoom } from "@/modules/room/application/store/room";
 import { TeamModuleProvider } from "@/modules/team/application/provider";
@@ -16,6 +17,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className='h-[100dvh] w-[100dvw] flex items-start'>
+      <LoadingModuleProvider />
       <Sidebar />
       <RoomModuleProvider />
       <TeamModuleProvider />

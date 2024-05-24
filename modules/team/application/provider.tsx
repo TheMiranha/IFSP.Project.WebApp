@@ -5,22 +5,24 @@ import { useCallback, useEffect } from "react"
 import { useTeam } from "./store/team"
 import { getUserTeams } from "../domain/team.actions"
 import { CreateTeamDialog } from "./create-team-dialog"
+import { useLoading } from "@/modules/loading/application/store/loading"
 
 export const TeamModuleProvider = () => {
 
   const { currentRoom } = useRoom()
-  const { setTeams, setLoading, resetStore } = useTeam()
+  const { setTeams, resetStore } = useTeam()
+  const { setActive } = useLoading()
 
   const loadTeams = useCallback(async () => {
     if (!currentRoom) return
-    setLoading(true)
+    setActive(true)
 
     const response = await getUserTeams({ roomId: currentRoom?.room.id })
 
     setTeams(response.teams)
 
-    setLoading(false)
-  }, [setLoading, currentRoom, setTeams])
+    setActive(false)
+  }, [setActive, currentRoom, setTeams])
 
   useEffect(() => {
     resetStore()
