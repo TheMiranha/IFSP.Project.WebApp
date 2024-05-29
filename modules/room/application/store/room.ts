@@ -2,33 +2,54 @@ import { ProfileRoom, Room } from "@prisma/client"
 import { create } from "zustand"
 import { ComplexRoom } from "../../domain/types"
 
-
-type Store = {
-
+type StoreValues = {
   openRoomsTableDialog: boolean
-  setOpenRoomsTableDialog: (e: boolean) => void
-
   openCreateRoomDialog: boolean
-  setOpenCreateRoomDialog: (e: boolean) => void
-
+  openShareRoomDialog: boolean
+  openEnterRoomDialog: boolean
   rooms: ComplexRoom[]
-  setRooms: (e: ComplexRoom[]) => void
-
   currentRoom: ComplexRoom | null
-  setCurrentRoom: (e: ComplexRoom | null) => void
+}
+
+type StoreFunctions = {
+
+  setOpenRoomsTableDialog: (e: StoreValues['openRoomsTableDialog']) => void
+
+  setOpenCreateRoomDialog: (e: StoreValues['openCreateRoomDialog']) => void
+
+  setOpenShareRoomDialog: (e: StoreValues['openShareRoomDialog']) => void
+
+  setOpenEnterRoomDialog: (e: StoreValues['openEnterRoomDialog']) => void
+
+  setRooms: (e: StoreValues['rooms']) => void
+
+  setCurrentRoom: (e: StoreValues['currentRoom']) => void
+}
+
+type Store = StoreValues & StoreFunctions
+
+const initialStoreValues = {
+  openRoomsTableDialog: false,
+  openCreateRoomDialog: false,
+  openShareRoomDialog: false,
+  openEnterRoomDialog: false,
+  rooms: [],
+  currentRoom: null,
 }
 
 export const useRoom = create<Store>((set) => ({
+  ...initialStoreValues,
 
-  openRoomsTableDialog: false,
-  setOpenRoomsTableDialog: (e: boolean) => set({ openRoomsTableDialog: e }),
+  setOpenRoomsTableDialog: (e) => set({ openRoomsTableDialog: e }),
 
-  openCreateRoomDialog: false,
-  setOpenCreateRoomDialog: (e: boolean) => set({ openCreateRoomDialog: e }),
+  setOpenCreateRoomDialog: (e) => set({ openCreateRoomDialog: e }),
 
-  rooms: [],
-  setRooms: (e: ComplexRoom[]) => set({ rooms: e }),
+  setOpenShareRoomDialog: (e) => set({ openShareRoomDialog: e }),
 
-  currentRoom: null,
-  setCurrentRoom: (e: ComplexRoom | null) => set({ currentRoom: e })
+  setOpenEnterRoomDialog: (e) => set({ openEnterRoomDialog: e }),
+
+  setRooms: (e) => set({ rooms: e }),
+
+  setCurrentRoom: (e) => set({ currentRoom: e })
+
 }))

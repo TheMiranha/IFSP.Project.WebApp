@@ -1,4 +1,5 @@
 import { User as ClerkUser } from "@clerk/nextjs/server"
+import { SimplifiedAuthUser } from "../utils"
 
 export type AuthUser = ClerkUser
 
@@ -35,7 +36,7 @@ export type GetAuthData = {
   },
   response: {
     success: boolean
-    authData?: AuthUser
+    authData?: SimplifiedAuthUser
   }
 }
 

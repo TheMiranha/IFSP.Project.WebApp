@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
-import { CreateRoom, GetUserRooms, IRoomOutputs } from "../domain/room.outputs";
+import { CreateRoom, EnterRoom, GetUserRoom, GetUserRooms, IRoomOutputs, RegenerateRoomShareCode } from "../domain/room.outputs";
 import { currentAccount, getAuthData } from "@/modules/auth/domain/auth.actions";
 import { ProfileRoom } from "@prisma/client";
 import { WithProfile } from "../domain/types";
+import { generateShareCode } from "../utils";
 
 export class SSRRoom implements IRoomOutputs {
 
@@ -53,28 +54,64 @@ export class SSRRoom implements IRoomOutputs {
     return { rooms: response }
   }
 
-  async createRoom({ description, iconName, name }: CreateRoom['props']): Promise<CreateRoom['response']> {
+  async getUserRoom(props: GetUserRoom['props']): Promise<GetUserRoom['response']> {
 
     const { profileId } = await currentAccount()
 
-    function generateMeetingRoomInvitationString() {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let invitationString = '';
-
-      for (let i = 0; i < 16; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        invitationString += chars.charAt(randomIndex);
+    const room = await db.room.findFirst({
+      where: {
+        id: props.roomId,
+        profilesRoom: {
+          some: {
+            profileId: profileId
+          }
+        },
+      },
+      include: {
+        profilesRoom: {
+          include: {
+            profile: true
+          }
+        }
       }
+    })
 
-      return invitationString;
+    if (!room) return { room: undefined }
+
+    let response: GetUserRoom['response']['room'] = undefined
+    const roomObject = { ...room }
+    const profileRoom = await db.profileRoom.findFirst({
+      where: {
+        roomId: roomObject.id,
+        profileId: profileId
+      }
+    })
+
+    for (let profileRoomIndex = 0; profileRoomIndex < roomObject.profilesRoom.length; profileRoomIndex++) {
+      const profileObject = roomObject.profilesRoom[profileRoomIndex].profile
+      const profileData = await getAuthData({ clerkId: profileObject.clerkId })
+      if (profileData.authData) {
+        Object.assign(profileObject, { authData: profileData.authData })
+      }
     }
+
+    if (profileRoom) {
+      response = { profileRoom, room: (roomObject as GetUserRooms['response']['rooms'][number]['room']) }
+    }
+
+    return { room: response }
+  }
+
+  async createRoom({ description, iconName, name }: CreateRoom['props']): Promise<CreateRoom['response']> {
+
+    const { profileId, clerkId } = await currentAccount()
 
     const createdRoom = await db.room.create({
       data: {
         name,
         description,
         iconName,
-        shareCode: generateMeetingRoomInvitationString()
+        shareCode: generateShareCode()
       }
     })
 
@@ -95,6 +132,8 @@ export class SSRRoom implements IRoomOutputs {
     }
 
     const returnedProfileRoom = (await db.profileRoom.findFirst({ where: { id: profileRoom.id }, include: { profile: true } })) as WithProfile<ProfileRoom>
+    const authDataResponse = await getAuthData({ clerkId })
+    Object.assign(returnedProfileRoom.profile, { authData: authDataResponse.authData })
 
     return {
       success: true,
@@ -106,7 +145,83 @@ export class SSRRoom implements IRoomOutputs {
         profileRoom
       },
     }
+  }
 
+  async regenerateRoomShareCode(props: RegenerateRoomShareCode["props"]): Promise<RegenerateRoomShareCode['response']> {
+    const { roomId } = props
+    const { profileId } = await currentAccount()
+    const profileRoom = await db.profileRoom.findFirst({
+      where: {
+        roomId,
+        profileId
+      }
+    })
+
+    if (!profileRoom) {
+      return {
+        success: false,
+        errorMessage: 'Você não está nesta sala.'
+      }
+    }
+    if (profileRoom.role != 'OWNER') {
+      return {
+        success: false,
+        errorMessage: 'Você não possui permissões para isto.'
+      }
+    }
+
+    const newShareCode = generateShareCode()
+    await db.room.update({
+      where: {
+        id: roomId
+      },
+      data: {
+        shareCode: newShareCode
+      }
+    })
+
+    return {
+      success: true,
+      shareCode: newShareCode
+    }
+
+  }
+
+  async enterRoom(props: EnterRoom['props']): Promise<EnterRoom['response']> {
+
+    const { shareCode } = props
+    const { profileId } = await currentAccount()
+
+    const roomByShareCode = await db.room.findFirst({ where: { shareCode }, include: { teams: true } })
+    if (!roomByShareCode) {
+      return { success: false, errorMessage: 'Nenhuma turma com este código foi encontrada.' };
+    }
+
+    const alreadyJoined = await db.profileRoom.findFirst({ where: { roomId: roomByShareCode.id, profileId } })
+    if (alreadyJoined) {
+      return { success: false, errorMessage: 'Você já está nesta turma.' }
+    }
+
+    const profileRoom = await db.profileRoom.create({
+      data: {
+        role: 'MEMBER',
+        wallet: 0,
+        profileId,
+        roomId: roomByShareCode.id
+      }
+    })
+
+    if (!profileRoom) {
+      return { success: false, errorMessage: 'Ocorreu um erro.' }
+    }
+
+    const complexRoom = await this.getUserRoom({ roomId: roomByShareCode.id })
+
+    return {
+      success: !!complexRoom,
+      ...complexRoom,
+      errorMessage: !complexRoom ? 'Não foi possível atualizar suas turmas.' : undefined
+    }
   }
 
 }

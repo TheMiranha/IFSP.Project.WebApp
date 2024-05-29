@@ -58,6 +58,8 @@ export const CreateRoomDialog = () => {
 
       setRooms([...rooms, complexRoom])
 
+      form.reset()
+
       setActive(false)
       setOpenCreateRoomDialog(false)
     } else {

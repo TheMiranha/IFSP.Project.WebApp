@@ -6,6 +6,8 @@ import { getUserRooms } from "../domain/room.actions"
 import { RoomsTableDialog } from "./rooms-table-dialog"
 import { CreateRoomDialog } from "./create-room-dialog"
 import { useLoading } from "@/modules/loading/application/store/loading"
+import { ShareRoomDialog } from "./share-room-dialog"
+import { EnterRoomDialog } from "./enter-room-dialog"
 
 export function RoomModuleProvider() {
 
@@ -30,6 +32,8 @@ export function RoomModuleProvider() {
     <>
       <RoomsTableDialog />
       <CreateRoomDialog />
+      <ShareRoomDialog />
+      <EnterRoomDialog />
     </>
   )
 

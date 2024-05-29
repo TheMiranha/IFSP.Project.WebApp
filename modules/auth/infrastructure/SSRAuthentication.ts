@@ -2,6 +2,7 @@ import { AuthModuleOutputs, CreateAccount, CreateGithubProfile, CurrentAccount, 
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { ptBR } from "../domain/ptBR";
 import { db } from "@/lib/db";
+import { simplifyAuthData } from "../utils";
 
 export class SSRAuthentication implements AuthModuleOutputs {
   async createAccount({
@@ -104,7 +105,7 @@ export class SSRAuthentication implements AuthModuleOutputs {
     if (clerkUser) {
       return {
         success: true,
-        authData: clerkUser
+        authData: simplifyAuthData(clerkUser)
       }
     }
     return {

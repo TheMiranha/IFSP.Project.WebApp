@@ -1,8 +1,8 @@
 'use client'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useRoom } from "./store/room"
-import { ArrowRightIcon, GraduationCapIcon, PlusIcon } from "lucide-react"
+import { ArrowRightIcon, GraduationCapIcon, MoreVertical, PlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
@@ -12,11 +12,36 @@ import { ComplexRoom } from "../domain/types"
 import { cn } from "@/lib/utils"
 import { useLoading } from "@/modules/loading/application/store/loading"
 import { CopyToClipboardContainer } from "@/lib/hooks/useCopyToClipboard"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { enterRoom } from "../domain/room.actions"
+import { toast } from "@/components/ui/use-toast"
 
 export const RoomsTableDialog = () => {
 
-  const { setCurrentRoom, openRoomsTableDialog, setOpenRoomsTableDialog, rooms, setOpenCreateRoomDialog } = useRoom()
+  const { setRooms, setOpenEnterRoomDialog, setCurrentRoom, openRoomsTableDialog, setOpenRoomsTableDialog, rooms, setOpenCreateRoomDialog } = useRoom()
   const { active } = useLoading()
+  const [code, setCode] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const router = useRouter()
+
+  const handleEnterRoom = async () => {
+    if (loading) return
+    if (code.length < 19) {
+      return toast({ title: 'Ops...', description: 'Código de turma incorreto!', variant: 'destructive' })
+    }
+    setLoading(true)
+    const response = await enterRoom({ shareCode: code })
+    if (!response.success || !response.room) {
+      return toast({ title: 'Ops...', description: response.errorMessage, variant: 'destructive' })
+    }
+    setOpenEnterRoomDialog(false)
+    setRooms([...rooms, response.room])
+    setCurrentRoom(response.room)
+    setLoading(false)
+    return toast({ title: 'Você entrou na turma!', description: `Turma: "${response.room.room.name}"` })
+  }
 
   const handleCreate = () => {
     setOpenRoomsTableDialog(false)
@@ -26,6 +51,17 @@ export const RoomsTableDialog = () => {
   const handleRoomSelect = (complexRoom: ComplexRoom) => {
     setOpenRoomsTableDialog(false)
     setCurrentRoom(complexRoom)
+  }
+
+  const handleRedirect = ({ complexRoom, href }: { complexRoom: ComplexRoom, href: string }) => {
+    setOpenRoomsTableDialog(false)
+    setCurrentRoom(complexRoom)
+    router.push(href)
+  }
+
+  const handleEnterRoomDialog = () => {
+    setOpenRoomsTableDialog(false)
+    setOpenEnterRoomDialog(true)
   }
 
   const EmptyRooms = () => {
@@ -38,8 +74,8 @@ export const RoomsTableDialog = () => {
         <div className='w-full flex flex-col justify-center items-center gap-2 mt-4'>
           <Label>Ou cole um convite aqui</Label>
           <div className='flex items-center gap-1'>
-            <Input placeholder="AJNS-SEF-23AS" />
-            <Button>
+            <Input placeholder="515J-3ECN-SZ3V-Q82E" value={code} onChange={e => setCode(e.target.value)} />
+            <Button onClick={handleEnterRoom}>
               <ArrowRightIcon />
             </Button>
           </div>
@@ -64,6 +100,15 @@ export const RoomsTableDialog = () => {
               )
             }
           </DialogTitle>
+          {
+            rooms.length > 0 && (
+              <DialogDescription>
+                <Label className='cursor-pointer' onClick={handleEnterRoomDialog}>
+                  Tem um código de turma?
+                </Label>
+              </DialogDescription>
+            )
+          }
         </DialogHeader>
         <div>
           {
@@ -71,24 +116,15 @@ export const RoomsTableDialog = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Código</TableHead>
                     <TableHead>Nome</TableHead>
-                    <TableHead>Ações</TableHead>
+                    {/* <TableHead>Ações</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {
                     rooms.map(complexRoom => (
                       <TableRow key={complexRoom.room.id}>
-                        <TableCell>
-                          <CopyToClipboardContainer content={complexRoom.room.id} title='Código de sala copiado!'>
-                            <Button variant='ghost'>
-                              {complexRoom.room.id}
-                            </Button>
-                          </CopyToClipboardContainer>
-                        </TableCell>
                         <TableCell className='flex items-center gap-2'>
-
                           <CopyToClipboardContainer content={complexRoom.room.name} title='Nome de sala copiado!'>
                             <Button variant='ghost'>
                               <Icon name={complexRoom.room.iconName} />
@@ -97,7 +133,14 @@ export const RoomsTableDialog = () => {
                           </CopyToClipboardContainer>
                         </TableCell>
                         <TableCell>
-                          <Button variant='outline' onClick={() => handleRoomSelect(complexRoom)}>Acessar</Button>
+                          <Button variant='outline' onClick={() => handleRoomSelect(complexRoom)}>
+                            Acessar
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant='outline' onClick={() => handleRedirect({ href: '/room-members', complexRoom })}>
+                            Membros
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))
