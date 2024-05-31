@@ -26,6 +26,7 @@ const SidebarItems = () => {
     <div className='p-4 flex flex-col flex-1'>
       <TooltipProvider>
         <div className='flex-1 flex flex-col gap-2'>
+          <SidebarItem href={'/room-members'} icon={'GraduationCap'} tooltipContent="Membros da turma" />
           <SidebarItem href={'/dashboard'} icon={'LayoutDashboard'} tooltipContent="Dashboard" />
           <SidebarItem href={'/kanban'} icon={'Kanban'} tooltipContent="Kanban" />
           <SidebarItem href={'/calendar'} icon={'CalendarDays'} tooltipContent="Calendário" />
@@ -52,8 +53,9 @@ const SidebarItem = ({ href, icon, tooltipContent }: { href: string, icon: Icons
     <Link href={href}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant='ghost' size='icon'>
+          <Button variant='ghost'>
             <Icon name={icon} size={24} />
+            <span className='hidden md:block'>{tooltipContent}</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent side='right'>{tooltipContent}</TooltipContent>

@@ -22,7 +22,7 @@ import { createTeam } from "../domain/team.actions";
 import { getNameByAuthUser } from "@/modules/user/application/utils";
 
 const formSchema = z.object({
-  name: z.string().min(3).max(25),
+  name: z.string().min(3).max(200),
   description: z.string().min(3).max(100),
   iconName: z.string(),
   leaderId: z.string()
