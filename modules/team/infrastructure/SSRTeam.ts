@@ -70,12 +70,29 @@ export class SSRTeam implements ITeamOutputs {
 
   async createTeam({ roomId, name, description, iconName, leaderId }: CreateTeam['props']): Promise<CreateTeam['response']> {
 
+    const { profileId } = await currentAccount()
+
     // criar team
     const teamAlreadyExists = await db.team.findFirst({ where: { name, roomId } })
     if (teamAlreadyExists) {
       return {
         success: false,
         errorMessage: 'Já existe uma equipe com este nome.'
+      }
+    }
+
+    const permission = await db.profileRoom.findFirst({
+      where: {
+        roomId,
+        profileId,
+        role: 'OWNER'
+      }
+    })
+
+    if (!permission) {
+      return {
+        success: false,
+        errorMessage: 'Você não pode criar equipes nesta turma!.'
       }
     }
 
