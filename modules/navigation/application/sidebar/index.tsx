@@ -36,11 +36,12 @@ const SidebarItems = () => {
         <div className='flex flex-col gap-2'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant='ghost' size='icon'>
+              <Button variant='ghost'>
                 <UserIcon className='size-6' />
+                Sua conta
               </Button>
             </TooltipTrigger>
-            <TooltipContent side='right'>Usuário</TooltipContent>
+            <TooltipContent side='right'>Sua conta</TooltipContent>
           </Tooltip>
         </div>
       </TooltipProvider>

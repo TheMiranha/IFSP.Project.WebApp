@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { CreateRoom, EnterRoom, GetUserRoom, GetUserRooms, IRoomOutputs, RegenerateRoomShareCode } from "../domain/room.outputs";
+import { CreateRoom, DisableShareCodeRoom, EnterRoom, GetUserRoom, GetUserRooms, IRoomOutputs, RegenerateRoomShareCode } from "../domain/room.outputs";
 import { currentAccount, getAuthData } from "@/modules/auth/domain/auth.actions";
 import { ProfileRoom } from "@prisma/client";
 import { WithProfile } from "../domain/types";
@@ -197,6 +197,10 @@ export class SSRRoom implements IRoomOutputs {
       return { success: false, errorMessage: 'Nenhuma turma com este código foi encontrada.' };
     }
 
+    if (roomByShareCode.disableShareCode) {
+      return { success: false, errorMessage: 'Nenhuma turma com este código foi encontrada.' };
+    }
+
     const alreadyJoined = await db.profileRoom.findFirst({ where: { roomId: roomByShareCode.id, profileId } })
     if (alreadyJoined) {
       return { success: false, errorMessage: 'Você já está nesta turma.' }
@@ -221,6 +225,53 @@ export class SSRRoom implements IRoomOutputs {
       success: !!complexRoom,
       ...complexRoom,
       errorMessage: !complexRoom ? 'Não foi possível atualizar suas turmas.' : undefined
+    }
+  }
+
+  async disableShareCodeRoom(props: DisableShareCodeRoom['props']): Promise<DisableShareCodeRoom['response']> {
+
+    const { disableShareCode, roomId } = props
+    const { profileId } = await currentAccount()
+
+    const room = await db.room.findUnique({ where: { id: roomId } })
+    if (!room) {
+      return {
+        success: false,
+        errorMessage: 'Turma não encontrada'
+      }
+    }
+
+    const teamProfile = await db.profileRoom.findFirst({
+      where: {
+        profileId,
+      }
+    })
+
+    if (!teamProfile) {
+      return {
+        success: false,
+        errorMessage: 'Você não faz parte dessa turma!'
+      }
+    }
+
+    if (teamProfile.role != 'OWNER') {
+      return {
+        success: false,
+        errorMessage: 'Você não tem permissões o suficiente.'
+      }
+    }
+
+    await db.room.update({
+      data: {
+        disableShareCode
+      },
+      where: {
+        id: roomId
+      }
+    })
+
+    return {
+      success: true
     }
   }
 

@@ -15,14 +15,28 @@ export class SSRTeam implements ITeamOutputs {
 
     const teams = await db.team.findMany({
       where: {
-        members: {
-          some: {
-            profileRoom: {
-              profileId: profileId
+        OR: [
+          {
+            members: {
+              some: {
+                profileRoom: {
+                  profileId: profileId
+                }
+              }
+            },
+          },
+          {
+            room: {
+              profilesRoom: {
+                some: {
+                  profileId,
+                  role: 'OWNER'
+                }
+              }
             }
           }
-        },
-        roomId
+        ],
+        roomId,
       },
       include: {
         members: {

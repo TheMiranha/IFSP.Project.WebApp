@@ -1,4 +1,4 @@
-import { CreateRoom, EnterRoom, GetUserRoom, GetUserRooms, IRoomOutputs, RegenerateRoomShareCode } from "../domain/room.outputs";
+import { CreateRoom, DisableShareCodeRoom, EnterRoom, GetUserRoom, GetUserRooms, IRoomOutputs, RegenerateRoomShareCode } from "../domain/room.outputs";
 
 export class CSRRoom implements IRoomOutputs {
 
@@ -38,6 +38,15 @@ export class CSRRoom implements IRoomOutputs {
 
   async enterRoom(props: EnterRoom['props']): Promise<EnterRoom['response']> {
     const response = await fetch('/api/rooms/enter-room', {
+      method: 'post',
+      body: JSON.stringify(props)
+    }).then(res => res.json())
+
+    return response
+  }
+
+  async disableShareCodeRoom(props: DisableShareCodeRoom['props']): Promise<DisableShareCodeRoom['response']> {
+    const response = await fetch('/api/rooms/disable-share-code', {
       method: 'post',
       body: JSON.stringify(props)
     }).then(res => res.json())

@@ -1,5 +1,5 @@
 import { isClientSide } from "@/lib/utils";
-import { CreateRoom, EnterRoom, GetUserRoom, GetUserRooms, RegenerateRoomShareCode } from "./room.outputs";
+import { CreateRoom, DisableShareCodeRoom, EnterRoom, GetUserRoom, GetUserRooms, RegenerateRoomShareCode } from "./room.outputs";
 import { roomOutputs } from "../config";
 
 function getOutput() {
@@ -46,6 +46,15 @@ export async function enterRoom(props: EnterRoom['props']): Promise<EnterRoom['r
   const localRoomOutputs = getOutput()
   try {
     return localRoomOutputs.enterRoom(props)
+  } catch (error: any) {
+    throw Error(error)
+  }
+}
+
+export async function disableShareCodeRoom(props: DisableShareCodeRoom['props']): Promise<DisableShareCodeRoom['response']> {
+  const localRoomOutputs = getOutput()
+  try {
+    return localRoomOutputs.disableShareCodeRoom(props)
   } catch (error: any) {
     throw Error(error)
   }
