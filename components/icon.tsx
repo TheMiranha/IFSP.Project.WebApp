@@ -12,6 +12,8 @@ const Icon = ({ name, color, size }: IconProps) => {
   // @ts-ignore
   const LucideIcon = (icons[name] as LucideIcon);
 
+  if (!LucideIcon) return false
+
   return <LucideIcon color={color} size={size} />;
 };
 
