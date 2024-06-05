@@ -116,14 +116,22 @@ export const RoomsTableDialog = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Código</TableHead>
                     <TableHead>Nome</TableHead>
-                    {/* <TableHead>Ações</TableHead> */}
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {
                     rooms.map(complexRoom => (
                       <TableRow key={complexRoom.room.id}>
+                        <TableCell>
+                          <CopyToClipboardContainer content={complexRoom.room.id} title='Código da sala copiado!'>
+                            <Button variant='ghost'>
+                              {complexRoom.room.id}
+                            </Button>
+                          </CopyToClipboardContainer>
+                        </TableCell>
                         <TableCell className='flex items-center gap-2'>
                           <CopyToClipboardContainer content={complexRoom.room.name} title='Nome de sala copiado!'>
                             <Button variant='ghost'>
@@ -135,11 +143,6 @@ export const RoomsTableDialog = () => {
                         <TableCell>
                           <Button variant='outline' onClick={() => handleRoomSelect(complexRoom)}>
                             Acessar
-                          </Button>
-                        </TableCell>
-                        <TableCell>
-                          <Button variant='outline' onClick={() => handleRedirect({ href: '/room-members', complexRoom })}>
-                            Membros
                           </Button>
                         </TableCell>
                       </TableRow>

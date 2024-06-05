@@ -26,9 +26,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className='flex-1 flex'>
           <ContainerHeight />
           <ScrollableHeight>
-            {
-              currentRoom ? children : <NoRoomSelected />
-            }
+            {children}
           </ScrollableHeight>
         </div>
       </div>

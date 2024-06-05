@@ -1,66 +1,27 @@
-import Icon, { Icons } from "@/components/icon"
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { CalendarDaysIcon, KanbanIcon, LayoutDashboardIcon, RabbitIcon, StoreIcon, UserIcon, UsersIcon } from "lucide-react"
-import Link from "next/link"
+'use client'
+
+import { SidebarTopSection } from "./sections/top"
+import { SidebarMidSection } from "./sections/mid"
+import { SidebarBottomSection } from "./sections/bottom"
+import { useEffect, useRef, useState } from "react"
 
 export function Sidebar() {
-  return (
-    <div className='h-[100dvh] flex flex-col items-center gap-2 border-r'>
-      <SidebarIcon />
-      <SidebarItems />
-    </div>
-  )
-}
 
-const SidebarIcon = () => {
-  return (
-    <div className='border-b w-full h-12 px-4 grid place-items-center'>
-      <RabbitIcon className='size-6' />
-    </div>
-  )
-}
+  const [localHeight, setLocalHeight] = useState(0)
+  const containerRef = useRef<null | HTMLDivElement>(null)
 
-const SidebarItems = () => {
-  return (
-    <div className='p-4 flex flex-col flex-1'>
-      <TooltipProvider>
-        <div className='flex-1 flex flex-col gap-2'>
-          <SidebarItem href={'/room-members'} icon={'GraduationCap'} tooltipContent="Membros da turma" />
-          <SidebarItem href={'/dashboard'} icon={'LayoutDashboard'} tooltipContent="Dashboard" />
-          <SidebarItem href={'/kanban'} icon={'Kanban'} tooltipContent="Kanban" />
-          <SidebarItem href={'/calendar'} icon={'CalendarDays'} tooltipContent="Calendário" />
-          <SidebarItem href={'/store'} icon={'Store'} tooltipContent="Loja" />
-          <SidebarItem href={'/teams'} icon={'Users'} tooltipContent="Equipes" />
-        </div>
-        <div className='flex flex-col gap-2'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant='ghost'>
-                <UserIcon className='size-6' />
-                Sua conta
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side='right'>Sua conta</TooltipContent>
-          </Tooltip>
-        </div>
-      </TooltipProvider>
-    </div>
-  )
-}
+  useEffect(() => {
+    setLocalHeight(containerRef?.current?.clientHeight || 0)
+  })
 
-const SidebarItem = ({ href, icon, tooltipContent }: { href: string, icon: Icons, tooltipContent: string }) => {
   return (
-    <Link href={href}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant='ghost'>
-            <Icon name={icon} size={24} />
-            <span className='hidden md:block'>{tooltipContent}</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side='right'>{tooltipContent}</TooltipContent>
-      </Tooltip>
-    </Link>
+    <div className='h-[100dvh] flex flex-col items-center border-r'>
+      <SidebarTopSection />
+      <div className='flex flex-1 w-full'>
+        <div className='h-full' ref={containerRef} />
+        <SidebarMidSection height={localHeight} />
+      </div>
+      <SidebarBottomSection />
+    </div>
   )
 }

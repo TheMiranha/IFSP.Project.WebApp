@@ -1,11 +1,12 @@
 'use client'
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { PageContainer } from "@/components/ui/page-container";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useRoom } from "@/modules/room/application/store/room";
 import { useTeam } from "@/modules/team/application/store/team";
-import { PlusIcon } from "lucide-react";
-import { TeamCard } from "./team-card";
+import { getNameByAuthUser } from "@/modules/user/application/utils";
+import moment from "moment";
 
 export function TeamPage() {
 
@@ -13,24 +14,41 @@ export function TeamPage() {
   const { currentRoom } = useRoom()
 
   return (
-    <div>
-      <Label className='text-lg flex items-center gap-2'>
-        {currentRoom?.profileRoom.role != "MEMBER" ? 'Equipes' : 'Suas equipes'}
-        {
-          currentRoom?.profileRoom.role != 'MEMBER' && (
-            <Button size='icon' variant='outline' onClick={() => setOpenCreateTeamDialog(true)}>
-              <PlusIcon />
-            </Button>
-          )
-        }
-      </Label>
-      <div className='flex flex-col md:flex-row flex-wrap items-center gap-4 mt-4'>
-        {
-          teams.map(team => (
-            <TeamCard key={team.id} team={team} />
-          ))
-        }
-      </div>
-    </div>
+    <PageContainer title='Equipes'>
+      {currentRoom?.profileRoom.role != "MEMBER" && (
+        <Button onClick={() => setOpenCreateTeamDialog(true)}>
+          botão temporário para adicionar equipe
+        </Button>
+      )}
+      <Table>
+        <TableCaption>Lista de equipes</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Código</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>Líder</TableHead>
+            <TableHead className='text-right'>Participantes</TableHead>
+            <TableHead className='text-right'>Criado em</TableHead>
+            <TableHead className='text-right'>Atualizado em</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {
+            teams.map(team => (
+              <TableRow key={team.id}>
+                <TableCell>{team.id}</TableCell>
+                <TableCell>{team.name}</TableCell>
+                <TableCell>
+                  {getNameByAuthUser(team.members.find(member => member.role === 'LEADER')?.profileRoom.profile.authData)}
+                </TableCell>
+                <TableCell className='text-right'>{team.members.length}</TableCell>
+                <TableCell className='text-right'>{moment(team.createdAt).format('DD/MM/YYYY HH:mm')}</TableCell>
+                <TableCell className='text-right'>{moment(team.updatedAt).format('DD/MM/YYYY HH:mm')}</TableCell>
+              </TableRow>
+            ))
+          }
+        </TableBody>
+      </Table>
+    </PageContainer>
   )
 }

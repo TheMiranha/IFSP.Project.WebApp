@@ -1,11 +1,10 @@
-'use client'
-
+import { PageContainer } from "@/components/ui/page-container";
 
 export function DashboardPage() {
 
   return (
-    <div>
-      <div>Dashboard</div>
-    </div>
+    <PageContainer title='Dashboard'>
+
+    </PageContainer>
   )
 }

@@ -10,13 +10,14 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command"
-import { CalendarDaysIcon, GraduationCapIcon, KanbanIcon, LayoutDashboardIcon, LogOut, MoonStarIcon, StoreIcon, SunIcon, UserIcon, UsersIcon } from "lucide-react"
+import { Backpack, BookmarkCheck, CalendarDaysIcon, Contact, GraduationCapIcon, Kanban, KanbanIcon, Layout, LayoutDashboardIcon, LayoutList, LogOut, LogOutIcon, MoonStarIcon, Settings, Store, StoreIcon, SunIcon, UserIcon, Users, UsersIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRoom } from "@/modules/room/application/store/room"
 import { useAuth } from "@/modules/auth/application/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useLoading } from "@/modules/loading/application/store/loading"
+import { DashboardIcon } from "@radix-ui/react-icons"
 
 export function SearchAll() {
 
@@ -60,45 +61,94 @@ export function SearchAll() {
       <CommandList>
         <ScrollArea className='h-[300px]'>
           <CommandEmpty>Nenhum resultado encontrado</CommandEmpty>
-          <CommandGroup heading="Sugestões">
+          <CommandGroup heading='Geral'>
             <CommandItem onSelect={() => {
-              setOpen(false)
-              setOpenRoomDialog(true)
+              handleRedirect('/dashboard')
             }}>
-              <GraduationCapIcon className="mr-2 size-6" />
-              <span>Suas turmas</span>
-            </CommandItem>
-            <CommandItem onSelect={() => handleRedirect('/teams')}>
-              <UsersIcon className="mr-2 size-6" />
-              <span>Equipes</span>
-            </CommandItem>
-            <CommandItem onSelect={() => handleRedirect('/dashboard')}>
-              <LayoutDashboardIcon className="mr-2 size-6" />
+              <DashboardIcon className="mr-2 size-6" />
               <span>Dashboard</span>
             </CommandItem>
-            <CommandItem onSelect={() => handleRedirect('/kanban')}>
-              <KanbanIcon className="mr-2 size-6" />
-              <span>Kanban</span>
+            <CommandItem onSelect={() => {
+              handleRedirect('/rooms')
+            }}>
+              <GraduationCapIcon className="mr-2 size-6" />
+              <span>Turmas</span>
             </CommandItem>
-            <CommandItem onSelect={() => handleRedirect('/calendar')}>
-              <CalendarDaysIcon className="mr-2 size-6" />
-              <span>Calendário</span>
+          </CommandGroup>
+          <CommandGroup heading='Turma'>
+            <CommandItem onSelect={() => {
+              handleRedirect('/teams')
+            }}>
+              <Users className="mr-2 size-6" />
+              <span>Equipes</span>
             </CommandItem>
-            <CommandItem onSelect={() => handleRedirect('/store')}>
-              <StoreIcon className="mr-2 size-6" />
-              <span>Itens</span>
+            <CommandItem onSelect={() => {
+              handleRedirect('/room-members')
+            }}>
+              <Contact className="mr-2 size-6" />
+              <span>Membros</span>
             </CommandItem>
-            <CommandItem>
-              <UserIcon className="mr-2 size-6" />
-              <span>Perfil</span>
+            <CommandItem onSelect={() => {
+              handleRedirect('/room-settings')
+            }}>
+              <Settings className="mr-2 size-6" />
+              <span>Ajustes</span>
             </CommandItem>
-            <CommandItem onSelect={toggleTheme}>
-              {theme === 'light' ? <SunIcon className='mr-2 size-6' /> : <MoonStarIcon className='mr-2 size-6' />}
-              <span>Trocar tema</span>
+          </CommandGroup>
+          <CommandGroup heading='Equipe'>
+            <CommandItem onSelect={() => {
+              handleRedirect('/board')
+            }}>
+              <Kanban className="mr-2 size-6" />
+              <span>Board</span>
             </CommandItem>
-            <CommandItem onSelect={() => handleSignOut()}>
-              <LogOut className='mr-2 size-6' />
+            <CommandItem onSelect={() => {
+              handleRedirect('/tasks')
+            }}>
+              <LayoutList className="mr-2 size-6" />
+              <span>Tarefas</span>
+            </CommandItem>
+            <CommandItem onSelect={() => {
+              handleRedirect('/team-members')
+            }}>
+              <Users className="mr-2 size-6" />
+              <span>Integrantes</span>
+            </CommandItem>
+          </CommandGroup>
+          <CommandGroup heading='Você'>
+            <CommandItem onSelect={() => {
+              handleRedirect('/inventory')
+            }}>
+              <Backpack className="mr-2 size-6" />
+              <span>Inventário</span>
+            </CommandItem>
+            <CommandItem onSelect={() => {
+              handleRedirect('/store')
+            }}>
+              <Store className="mr-2 size-6" />
+              <span>Loja</span>
+            </CommandItem>
+            <CommandItem onSelect={() => {
+              handleRedirect('/my-tasks')
+            }}>
+              <BookmarkCheck className="mr-2 size-6" />
+              <span>Suas tarefas</span>
+            </CommandItem>
+          </CommandGroup>
+          <CommandGroup heading='Conta'>
+            <CommandItem onSelect={() => {
+              handleSignOut()
+            }}>
+              <LogOutIcon className="mr-2 size-6" />
               <span>Sair</span>
+            </CommandItem>
+          </CommandGroup>
+          <CommandGroup heading='Outros'>
+            <CommandItem onSelect={() => {
+              toggleTheme()
+            }}>
+              <Layout className="mr-2 size-6" />
+              <span>Tema</span>
             </CommandItem>
           </CommandGroup>
         </ScrollArea>

@@ -35,6 +35,7 @@ export function CreateTeamDialog() {
   const { currentRoom } = useRoom()
   const [openIconPopover, setOpenIconPopover] = useState<boolean>(false)
   const [openLeaderPopover, setOpenLeaderPopover] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,10 +55,14 @@ export function CreateTeamDialog() {
       })
     }
 
+    setLoading(true)
+
     const response = await createTeam({
       ...data,
       roomId: currentRoom?.room.id
     })
+
+    setLoading(false)
 
     if (!response.success) {
       return toast({
@@ -84,12 +89,9 @@ export function CreateTeamDialog() {
     }
   }, [openCreateTeamDialog, form])
 
-  const selectedLeader = useMemo(() => {
-    return currentRoom?.room?.profilesRoom?.find(profileRoom => {
-      return profileRoom.id === form.getValues('leaderId')
-    })
-  }, [currentRoom, openLeaderPopover])
-
+  const selectedLeader = currentRoom?.room?.profilesRoom?.find(profileRoom => {
+    return profileRoom.id === form.getValues('leaderId')
+  })
 
   return (
     <Dialog open={openCreateTeamDialog} onOpenChange={setOpenCreateTeamDialog}>
@@ -112,6 +114,7 @@ export function CreateTeamDialog() {
                       <FormLabel>Nome</FormLabel>
                       <FormControl>
                         <Input
+                          disabled={loading}
                           placeholder='Nome da equipe'
                           className='w-[300px]'
                           {...field}
@@ -129,6 +132,7 @@ export function CreateTeamDialog() {
                       <FormLabel>Descrição</FormLabel>
                       <FormControl>
                         <Input
+                          disabled={loading}
                           placeholder='Descrição da equipe'
                           className='w-[300px]'
                           {...field}
@@ -144,10 +148,11 @@ export function CreateTeamDialog() {
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>Ícone</FormLabel>
-                      <Popover open={openIconPopover} onOpenChange={setOpenIconPopover}>
+                      <Popover open={loading ? false : openIconPopover} onOpenChange={!loading ? setOpenIconPopover : () => { }}>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
+                              disabled={loading}
                               variant="outline"
                               role="combobox"
                               className={cn(
@@ -177,6 +182,7 @@ export function CreateTeamDialog() {
                                       value={iconName}
                                       key={iconName}
                                       onSelect={() => {
+                                        if (loading) return
                                         setOpenIconPopover(false)
                                         form.setValue("iconName", iconName)
                                       }}
@@ -203,10 +209,11 @@ export function CreateTeamDialog() {
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>Líder</FormLabel>
-                      <Popover open={openLeaderPopover} onOpenChange={setOpenLeaderPopover}>
+                      <Popover open={loading ? false : openLeaderPopover} onOpenChange={loading ? () => { } : setOpenLeaderPopover}>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
+                              disabled={loading}
                               variant="outline"
                               role="combobox"
                               className={cn(
@@ -258,7 +265,7 @@ export function CreateTeamDialog() {
                 />
               </div>
               <div className='w-full flex justify-end'>
-                <Button type='submit'>
+                <Button type='submit' disabled={loading}>
                   <PlusIcon />
                   Criar
                 </Button>
