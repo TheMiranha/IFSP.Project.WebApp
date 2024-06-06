@@ -16,7 +16,7 @@ export function SidebarMidSection({ height }: { height: number }) {
   }
 
   return (
-    <ScrollArea className='flex flex-col w-full px-4' style={{ height: `${height}px` }}>
+    <ScrollArea className='flex flex-col w-full px-4' style={{ height: `calc(100dvh - 160px)` }}>
       <div className='flex flex-col gap-4 py-4'>
         <div className='space-y-2'>
           <Label className='text-muted-foreground'>Geral</Label>

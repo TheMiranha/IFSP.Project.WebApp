@@ -5,18 +5,14 @@ import { ScrollableHeight } from "@/modules/container/application/scrollable-hei
 import { LoadingModuleProvider } from "@/modules/loading/application/provider";
 import { Sidebar } from "@/modules/navigation/application/sidebar";
 import { Topbar } from "@/modules/navigation/application/topbar";
-import { NoRoomSelected } from "@/modules/room/application/no-room-selected";
 import { RoomModuleProvider } from "@/modules/room/application/provider";
-import { useRoom } from "@/modules/room/application/store/room";
 import { TeamModuleProvider } from "@/modules/team/application/provider";
 import { ReactNode } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
 
-  const { currentRoom } = useRoom()
-
   return (
-    <div className='h-[100dvh] w-[100dvw] flex items-start'>
+    <div className='h-[100dvh] w-[100dvw] flex items-start overflow-hidden'>
       <LoadingModuleProvider />
       <Sidebar />
       <RoomModuleProvider />

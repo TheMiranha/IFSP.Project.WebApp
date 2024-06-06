@@ -32,10 +32,10 @@ export function SidebarTopSection() {
   }
 
   return (
-    <div className='flex items-center gap-2 px-2 h-12 w-[225px] border-b'>
+    <div className='flex items-center gap-2 px-2 h-20 md:h-12 w-[225px] border-b'>
       <Popover open={openRoomSelector} onOpenChange={setOpenRoomSelector}>
         <PopoverTrigger className='w-full' asChild>
-          <Button variant='ghost' className='w-full'>
+          <Button variant='secondary' className='w-full my-6 md:h-fit'>
             <div className='flex-1 flex items-center gap-2'>
               {
                 currentRoom && (
@@ -46,9 +46,12 @@ export function SidebarTopSection() {
                 {currentRoom ? currentRoom.room.name : 'Escolher turma'}
               </div>
             </div>
-            <Badge variant='secondary'>
+            <Badge variant='secondary' className='hidden md:flex'>
               <CommandIcon className='size-4' />
               + O
+            </Badge>
+            <Badge variant='secondary' className='flex md:hidden'>
+              <ChevronsUpDown className='size-4' />
             </Badge>
           </Button>
         </PopoverTrigger>
@@ -60,9 +63,10 @@ export function SidebarTopSection() {
               <CommandGroup>
                 {
                   rooms.map(room => (
-                    <CommandItem value={room.room.name} key={room.room.id} className='flex items-center justify-between' onSelect={() => {
+                    <CommandItem value={room.room.name} key={room.room.id} onSelect={() => {
                       handleSelectRoom(room)
-                    }}>
+                    }}
+                    >
                       <Label className='flex-1 truncate'>
                         {room.room.name}
                       </Label>

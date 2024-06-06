@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { enterRoom } from "../domain/room.actions"
 import { toast } from "@/components/ui/use-toast"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export const RoomsTableDialog = () => {
 
@@ -51,12 +52,6 @@ export const RoomsTableDialog = () => {
   const handleRoomSelect = (complexRoom: ComplexRoom) => {
     setOpenRoomsTableDialog(false)
     setCurrentRoom(complexRoom)
-  }
-
-  const handleRedirect = ({ complexRoom, href }: { complexRoom: ComplexRoom, href: string }) => {
-    setOpenRoomsTableDialog(false)
-    setCurrentRoom(complexRoom)
-    router.push(href)
   }
 
   const handleEnterRoomDialog = () => {
@@ -113,43 +108,57 @@ export const RoomsTableDialog = () => {
         <div>
           {
             rooms.length === 0 ? <EmptyRooms /> : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Código</TableHead>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <ScrollArea className='h-36'>
+                <div className='flex flex-col gap-2 items-center px-5 md:hidden'>
                   {
-                    rooms.map(complexRoom => (
-                      <TableRow key={complexRoom.room.id}>
-                        <TableCell>
-                          <CopyToClipboardContainer content={complexRoom.room.id} title='Código da sala copiado!'>
-                            <Button variant='ghost'>
-                              {complexRoom.room.id}
-                            </Button>
-                          </CopyToClipboardContainer>
-                        </TableCell>
-                        <TableCell className='flex items-center gap-2'>
-                          <CopyToClipboardContainer content={complexRoom.room.name} title='Nome de sala copiado!'>
-                            <Button variant='ghost'>
-                              <Icon name={complexRoom.room.iconName} />
-                              {complexRoom.room.name}
-                            </Button>
-                          </CopyToClipboardContainer>
-                        </TableCell>
-                        <TableCell>
-                          <Button variant='outline' onClick={() => handleRoomSelect(complexRoom)}>
-                            Acessar
-                          </Button>
-                        </TableCell>
-                      </TableRow>
+                    rooms.map(room => (
+                      <Button size='sm' key={room.room.id} className='flex items-center gap-2 w-full max-w-full' onClick={() => handleRoomSelect(room)}>
+                        <Icon name={room.room.iconName} size={20} />
+                        <Label className='truncate max-w-[150px]'>
+                          {room.room.name}
+                        </Label>
+                      </Button>
                     ))
                   }
-                </TableBody>
-              </Table>
+                </div>
+                <Table className='hidden md:inline-table'>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Código</TableHead>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {
+                      rooms.map(complexRoom => (
+                        <TableRow key={complexRoom.room.id}>
+                          <TableCell>
+                            <CopyToClipboardContainer content={complexRoom.room.id} title='Código da sala copiado!'>
+                              <Button variant='ghost'>
+                                {complexRoom.room.id}
+                              </Button>
+                            </CopyToClipboardContainer>
+                          </TableCell>
+                          <TableCell className='flex items-center gap-2'>
+                            <CopyToClipboardContainer content={complexRoom.room.name} title='Nome de sala copiado!'>
+                              <Button variant='ghost'>
+                                <Icon name={complexRoom.room.iconName} />
+                                {complexRoom.room.name}
+                              </Button>
+                            </CopyToClipboardContainer>
+                          </TableCell>
+                          <TableCell>
+                            <Button variant='outline' onClick={() => handleRoomSelect(complexRoom)}>
+                              Acessar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    }
+                  </TableBody>
+                </Table>
+              </ScrollArea>
             )
           }
         </div>

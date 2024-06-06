@@ -8,7 +8,7 @@ import { useLoading } from "@/modules/loading/application/store/loading"
 
 export const NoRoomSelected = () => {
 
-  const { height } = useContainer()
+  const { contentHeight } = useContainer()
   const { setOpenRoomsTableDialog } = useRoom()
   const { active } = useLoading()
 
@@ -21,7 +21,7 @@ export const NoRoomSelected = () => {
   if (active) return false
 
   return (
-    <div style={{ height: `${height}px` }} className='grid place-items-center'>
+    <div style={{ height: `${contentHeight}px` }} className='grid place-items-center flex-1'>
       <Label>
         Nenhuma turma selecionada
       </Label>

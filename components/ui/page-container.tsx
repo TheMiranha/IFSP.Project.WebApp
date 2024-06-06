@@ -1,3 +1,5 @@
+'use client'
+
 import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card"
 
@@ -7,6 +9,7 @@ export interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement>
 }
 
 const PageContainer = React.forwardRef<HTMLDivElement, PageContainerProps>(({ children, title, subtitle }, ref) => {
+
   return (
     <Card ref={ref}>
       <CardHeader>

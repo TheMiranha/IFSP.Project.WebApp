@@ -3,7 +3,7 @@ import { CircleHelp } from "lucide-react";
 
 export function TopbarRight() {
   return (
-    <div className='flex-1 flex items-center justify-end'>
+    <div className='flex-1 items-center justify-end hidden md:flex'>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>

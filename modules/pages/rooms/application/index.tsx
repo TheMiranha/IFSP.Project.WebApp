@@ -3,11 +3,15 @@
 import Icon from "@/components/icon";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/ui/page-container";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { useRoom } from "@/modules/room/application/store/room";
 import { MoreVertical } from "lucide-react";
 import moment from 'moment'
+import { useRef } from "react";
+
+import { useResizeObserver } from 'usehooks-ts'
 
 export function RoomsPage() {
 

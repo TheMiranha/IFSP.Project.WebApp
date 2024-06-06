@@ -2,20 +2,21 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useContainer } from "./store/container"
+import { useResizeObserver } from "usehooks-ts"
 
 export function ContainerHeight() {
 
-  const { setHeight } = useContainer()
-  const [localHeight, setLocalHeight] = useState(0)
+  const { setHeight, setContentHeight } = useContainer()
   const containerRef = useRef<null | HTMLDivElement>(null)
-
-  useEffect(() => {
-    setLocalHeight(containerRef?.current?.clientHeight || 0)
+  const { height = 0 } = useResizeObserver({
+    ref: containerRef,
+    box: 'border-box'
   })
 
   useEffect(() => {
-    setHeight(localHeight)
-  }, [localHeight])
+    setHeight(height)
+    setContentHeight(height - 16)
+  }, [height])
 
   return (
     <div ref={containerRef} />
