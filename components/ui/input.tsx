@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  onValueChange: (e: string) => void
+  onValueChange?: (e: string) => void
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
