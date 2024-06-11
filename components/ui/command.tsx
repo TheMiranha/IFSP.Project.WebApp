@@ -116,13 +116,13 @@ CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
 const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item> & { disableCircle?: boolean }
+>(({ className, disableCircle, ...props }, ref) => (
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "before:transition-all before:h-0 before:w-0 before:bg-primary before:rounded-full before:relative before:-left-1 relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:opacity-80",
-      "aria-selected:before:h-4 aria-selected:before:w-4",
+      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:opacity-80",
+      !disableCircle && 'before:transition-all before:h-0 before:w-0 before:bg-primary before:rounded-full before:relative before:-left-1 aria-selected:before:w-4 aria-selected:before:h-4',
       className
     )}
     {...props}

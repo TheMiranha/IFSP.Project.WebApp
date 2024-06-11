@@ -3,10 +3,22 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  onValueChange: (e: string) => void
+}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, onValueChange, onChange, ...props }, ref) => {
+
+    const localOnChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      if (onChange) {
+        onChange(e)
+      }
+      if (onValueChange) {
+        onValueChange(e.target.value)
+      }
+    }, [onChange, onValueChange])
+
     return (
       <input
         type={type}
@@ -15,6 +27,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className
         )}
         ref={ref}
+        onChange={localOnChange}
         {...props}
       />
     )
