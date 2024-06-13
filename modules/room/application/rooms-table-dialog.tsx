@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useRoom } from "./store/room"
-import { ArrowRightIcon, GraduationCapIcon, MoreVertical, PlusIcon } from "lucide-react"
+import { ArrowRightIcon, GraduationCapIcon, PlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
@@ -12,7 +12,6 @@ import { ComplexRoom } from "../domain/types"
 import { cn } from "@/lib/utils"
 import { useLoading } from "@/modules/loading/application/store/loading"
 import { CopyToClipboardContainer } from "@/lib/hooks/useCopyToClipboard"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { enterRoom } from "../domain/room.actions"
@@ -108,7 +107,7 @@ export const RoomsTableDialog = () => {
         <div>
           {
             rooms.length === 0 ? <EmptyRooms /> : (
-              <ScrollArea className='h-36'>
+              <ScrollArea className='h-48'>
                 <div className='flex flex-col gap-2 items-center px-5 md:hidden'>
                   {
                     rooms.map(room => (
