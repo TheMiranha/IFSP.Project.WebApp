@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useRoom } from "./store/room"
-import { ChevronsUpDown, GraduationCapIcon, PlusIcon } from "lucide-react"
+import { ChevronsUpDown, GraduationCapIcon, Pencil, Plus, PlusIcon } from "lucide-react"
 import * as z from 'zod'
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -14,10 +14,10 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
 import Icon, { Icons } from "@/components/icon"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { createRoom } from "../domain/room.actions"
-import { CreateRoom } from "../domain/room.outputs"
+import { createRoom, editRoom } from "../domain/room.actions"
+import { CreateRoom, EditRoom } from "../domain/room.outputs"
 import { toast } from "@/components/ui/use-toast"
 import { useLoading } from "@/modules/loading/application/store/loading"
 
@@ -33,7 +33,7 @@ export const CreateRoomDialog = () => {
 
   const { active, setActive } = useLoading()
 
-  const { rooms, openCreateRoomDialog, setRooms, setOpenCreateRoomDialog, setCurrentRoom } = useRoom()
+  const { rooms, currentRoom, openCreateRoomDialog, setRooms, setOpenCreateRoomDialog, setCurrentRoom, currentEditRoom, setCurrentEditRoom } = useRoom()
   const [openIconPopover, setOpenIconPopover] = useState<boolean>(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,10 +45,64 @@ export const CreateRoomDialog = () => {
     }
   })
 
+  useEffect(() => {
+    if (currentEditRoom) {
+      form.setValue('name', currentEditRoom.room.name)
+      form.setValue('description', currentEditRoom.room.description)
+      form.setValue('iconName', currentEditRoom.room.iconName)
+    } else {
+      form.setValue('name', "")
+      form.setValue('description', "")
+      form.setValue('iconName', "")
+    }
+  }, [currentEditRoom])
+
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setActive(true)
+
+    if (currentEditRoom && currentEditRoom?.room?.id) {
+      const payload = { ...values, roomId: currentEditRoom.room.id } as EditRoom['props']
+      edit(payload)
+    } else {
+      const payload = values as CreateRoom['props']
+      create(payload)
+    }
+
+  }
+
+  const edit = async (payload: EditRoom['props']) => {
     setOpenCreateRoomDialog(false)
-    const payload = values as CreateRoom['props']
+    const response = await editRoom(payload)
+    if (response.success) {
+      if (currentRoom && currentEditRoom && currentRoom?.room.id === currentEditRoom?.room.id) {
+        setCurrentRoom({
+          ...currentRoom,
+          room: {
+            ...currentRoom.room,
+            name: payload.name,
+            description: payload.description,
+            iconName: payload.iconName
+          }
+        })
+      }
+
+      const newRooms = [...rooms]
+      newRooms.forEach(room => {
+        if (room.room.id === currentEditRoom?.room.id) {
+          room.room.name = payload.name
+          room.room.description = payload.description
+          room.room.iconName = payload.iconName
+        }
+      })
+      setRooms(rooms)
+      setCurrentEditRoom(null)
+    } else {
+      toast({ title: 'Ops...', description: response.errorMessage || 'Ocorreu um erro.', variant: 'destructive' })
+    }
+    setActive(false)
+  }
+
+  const create = async (payload: CreateRoom['props']) => {
     const response = await createRoom(payload)
     if (response.success) {
 
@@ -59,16 +113,14 @@ export const CreateRoomDialog = () => {
       setRooms([...rooms, complexRoom])
 
       form.reset()
-
-      setActive(false)
       setOpenCreateRoomDialog(false)
     } else {
       toast({
         title: 'Ocorreu um erro!',
         variant: 'destructive'
       })
-      setActive(false)
     }
+    setActive(false)
   }
 
   return (
@@ -77,7 +129,7 @@ export const CreateRoomDialog = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              <GraduationCapIcon /> Criar turma
+              <GraduationCapIcon /> {currentEditRoom ? 'Editar' : 'Criar'} turma
             </DialogTitle>
           </DialogHeader>
           <div>
@@ -180,8 +232,12 @@ export const CreateRoomDialog = () => {
                 </div>
                 <div className='w-full flex justify-end'>
                   <Button type='submit'>
-                    <PlusIcon />
-                    Criar
+                    {
+                      currentEditRoom ? <Pencil className='size-4' /> : <Plus className='size-4' />
+                    }
+                    {
+                      currentEditRoom ? 'Salvar' : 'Criar'
+                    }
                   </Button>
                 </div>
               </form>

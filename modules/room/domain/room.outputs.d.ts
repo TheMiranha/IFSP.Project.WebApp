@@ -29,6 +29,20 @@ export type CreateRoom = {
   }
 }
 
+export type EditRoom = {
+  props: {
+    name: string
+    description: string
+    iconName: Icons
+    roomId: string
+  }
+  response: {
+    success: boolean
+    errorMessage?: string
+  }
+}
+
+
 export type RegenerateRoomShareCode = {
   props: {
     roomId: string
@@ -62,11 +76,35 @@ export type DisableShareCodeRoom = {
   }
 }
 
+export type DeleteRoom = {
+  props: {
+    roomId: string
+  }
+  response: {
+    success: boolean
+    errorMessage?: string
+  }
+}
+
+
+export type QuitRoom = {
+  props: {
+    roomId: string
+  }
+  response: {
+    success: boolean
+    errorMessage?: string
+  }
+}
+
 export interface IRoomOutputs {
   getUserRooms(): Promise<GetUserRooms['response']>
   getUserRoom(props: GetUserRoom['props']): Promise<GetUserRoom['response']>
   createRoom(props: CreateRoom['props']): Promise<CreateRoom['response']>
+  editRoom(props: EditRoom['props']): Promise<EditRoom['response']>
   regenerateRoomShareCode(props: RegenerateRoomShareCode['props']): Promise<RegenerateRoomShareCode['response']>
   enterRoom(props: EnterRoom['props']): Promise<EnterRoom['response']>
   disableShareCodeRoom(props: DisableShareCodeRoom['props']): Promise<DisableShareCodeRoom['response']>
+  deleteRoom(props: DeleteRoom['props']): Promise<DeleteRoom['response']>
+  quitRoom(props: QuitRoom['props']): Promise<QuitRoom['response']>
 }

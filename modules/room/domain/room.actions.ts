@@ -1,5 +1,5 @@
 import { isClientSide } from "@/lib/utils";
-import { CreateRoom, DisableShareCodeRoom, EnterRoom, GetUserRoom, GetUserRooms, RegenerateRoomShareCode } from "./room.outputs";
+import { CreateRoom, DeleteRoom, DisableShareCodeRoom, EditRoom, EnterRoom, GetUserRoom, GetUserRooms, QuitRoom, RegenerateRoomShareCode } from "./room.outputs";
 import { roomOutputs } from "../config";
 
 function getOutput() {
@@ -33,6 +33,16 @@ export async function createRoom(props: CreateRoom['props']): Promise<CreateRoom
   }
 }
 
+export async function editRoom(props: EditRoom['props']): Promise<EditRoom['response']> {
+  const localRoomOutputs = getOutput()
+  try {
+    return localRoomOutputs.editRoom(props)
+  } catch (error: any) {
+    throw Error(error)
+  }
+}
+
+
 export async function regenerateRoomShareCode(props: RegenerateRoomShareCode['props']): Promise<RegenerateRoomShareCode['response']> {
   const localRoomOutputs = getOutput()
   try {
@@ -55,6 +65,24 @@ export async function disableShareCodeRoom(props: DisableShareCodeRoom['props'])
   const localRoomOutputs = getOutput()
   try {
     return localRoomOutputs.disableShareCodeRoom(props)
+  } catch (error: any) {
+    throw Error(error)
+  }
+}
+
+export async function deleteRoom(props: DeleteRoom['props']): Promise<DeleteRoom['response']> {
+  const localRoomOutputs = getOutput()
+  try {
+    return localRoomOutputs.deleteRoom(props)
+  } catch (error: any) {
+    throw Error(error)
+  }
+}
+
+export async function quitRoom(props: QuitRoom['props']): Promise<QuitRoom['response']> {
+  const localRoomOutputs = getOutput()
+  try {
+    return localRoomOutputs.quitRoom(props)
   } catch (error: any) {
     throw Error(error)
   }

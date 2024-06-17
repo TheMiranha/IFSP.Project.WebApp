@@ -23,7 +23,7 @@ export function TopbarLeft() {
       </Button>
       <Input
         placeholder="Pesquise qualquer coisa..."
-        className="w-fit px-6 cursor-pointer flex-1"
+        className="w-fit px-6 cursor-pointer flex-1 max-w-[300px]"
         onClick={e => {
           e.preventDefault()
           handleSearchClick()

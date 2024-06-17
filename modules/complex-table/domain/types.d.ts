@@ -10,6 +10,13 @@ export type ComplexTableColumn<TData> = {
   visible: boolean
 }
 
+export type ComplexTableHeaderAction = {
+  id: string
+  label: ReactNode
+  fn: () => void
+  icon?: ReactNode
+}
+
 type RowStatus = 'primary' | 'default' | 'secondary'
 
 export interface ComplexTableRow {

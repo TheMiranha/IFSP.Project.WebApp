@@ -38,48 +38,8 @@ model ProfileRoom {
 model ProfileRoomItem {
   id String @id @default(uuid())
 
-  profileRoomId String
-  profileRoom   ProfileRoom @relation(fields: [profileRoomId], references: [id])
-
-  itemId String
-  item   Item   @relation(fields: [itemId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Item {
-  id    String @unique @default(uuid())
-  price Int
-
-  eItemid String
-  eItem   EItem  @relation(fields: [eItemid], references: [id])
-
-  itemAttributes   ItemAttribute[]
-  profilesRoomItem ProfileRoomItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ItemAttribute {
-  id String @unique @default(uuid())
-
-  itemId String
-  item   Item   @relation(fields: [itemId], references: [id])
-
-  eAttributeId String
-  eAttribute   EAttribute @relation(fields: [eAttributeId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model EItem {
-  id       String @unique @default(uuid())
-  name     String
-  imageUrl String
-  price    Int
+  profileRoom   ProfileRoom? @relation(fields: [profileRoomId], references: [id])
+  profileRoomId String?
 
   items Item[]
 
@@ -87,24 +47,48 @@ model EItem {
   updatedAt DateTime @updatedAt
 }
 
-model EAttribute {
-  id       String @unique @default(uuid())
-  name     String
-  iconName String
-  points   Int
+model Item {
+  id       String @id @default(uuid())
+  price    Float
+  imageUrl String
 
-  itemAttributes ItemAttribute[]
+  type       EItem
+  attributes Attribute[]
+
+  profileRoomItems ProfileRoomItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model Attribute {
+  id String @id @default(uuid())
+
+  coeficient Float
+  attribute  EAttribute
+
+  items Item[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum EItem {
+  SWORD
+  BOW
+}
+
+enum EAttribute {
+  SPEED
+  PHYSICAL_DAMAGE
+}
+
 model Room {
-  id          String @id @default(uuid())
-  name        String
-  description String
-  iconName    String
-  shareCode String
+  id               String  @id @default(uuid())
+  name             String
+  description      String
+  iconName         String
+  shareCode        String
   disableShareCode Boolean @default(false)
 
   profilesRoom ProfileRoom[]
@@ -118,7 +102,7 @@ model Team {
   id          String @id @default(uuid())
   name        String
   description String
-  iconName String
+  iconName    String
 
   roomId String
   room   Room   @relation(fields: [roomId], references: [id])

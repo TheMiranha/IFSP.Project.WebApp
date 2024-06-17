@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
-import { CreateRoom, DisableShareCodeRoom, EnterRoom, GetUserRoom, GetUserRooms, IRoomOutputs, RegenerateRoomShareCode } from "../domain/room.outputs";
+import { CreateRoom, DeleteRoom, DisableShareCodeRoom, EditRoom, EnterRoom, GetUserRoom, GetUserRooms, IRoomOutputs, QuitRoom, RegenerateRoomShareCode } from "../domain/room.outputs";
 import { currentAccount, getAuthData } from "@/modules/auth/domain/auth.actions";
 import { ProfileRoom } from "@prisma/client";
 import { WithProfile } from "../domain/types";
 import { generateShareCode } from "../utils";
+import { profile } from "console";
 
 export class SSRRoom implements IRoomOutputs {
 
@@ -274,5 +275,108 @@ export class SSRRoom implements IRoomOutputs {
       success: true
     }
   }
+
+  async deleteRoom(props: DeleteRoom['props']): Promise<DeleteRoom['response']> {
+
+    const { profileId } = await currentAccount()
+    const { roomId } = props
+
+    if (!roomId) return { success: false, errorMessage: 'É necessário um código de turma!' }
+
+    const profileRoom = await db.profileRoom.findFirst({
+      where: {
+        profileId,
+        roomId: props.roomId
+      }
+    })
+
+    if (profileRoom?.role === 'OWNER') {
+
+      await db.teamProfile.deleteMany({ where: { profileRoom: { roomId } } })
+      await db.team.deleteMany({ where: { roomId } })
+      await db.profileRoomItem.deleteMany({ where: { profileRoom: { roomId } } })
+      await db.profileRoom.deleteMany({ where: { roomId } })
+      await db.room.delete({ where: { id: roomId } })
+      return { success: true }
+
+    }
+
+    return {
+      success: false,
+      errorMessage: 'Você não tem permissão para excluir esta turma.'
+    }
+  }
+
+  async quitRoom(props: QuitRoom['props']): Promise<QuitRoom['response']> {
+
+    const { profileId } = await currentAccount()
+    const { roomId } = props
+
+    if (!roomId) return { success: false, errorMessage: 'É necessário um código de turma!' }
+
+    const profileRoom = await db.profileRoom.findFirst({
+      where: {
+        profileId,
+        roomId: props.roomId
+      }
+    })
+
+    if (profileRoom?.role !== 'OWNER' && profileRoom) {
+
+      const { id: profileRoomId } = profileRoom
+
+      await db.teamProfile.deleteMany({ where: { profileRoomId } })
+      await db.profileRoomItem.deleteMany({ where: { profileRoomId } })
+      await db.profileRoom.delete({ where: { id: profileRoomId } })
+      return { success: true }
+
+    }
+
+    return {
+      success: false,
+      errorMessage: 'Você pode apenas deletar esta turma.'
+    }
+  }
+
+  async editRoom(props: EditRoom['props']): Promise<EditRoom['response']> {
+
+    const { profileId } = await currentAccount()
+    const { roomId, name, description, iconName } = props
+
+    if (!roomId) return { success: false, errorMessage: 'É necessário um código de turma!' }
+
+    const profileRoom = await db.profileRoom.findFirst({
+      where: {
+        profileId,
+        roomId: props.roomId
+      }
+    })
+
+    if (profileRoom?.role !== 'OWNER') {
+
+      return {
+        success: false,
+        errorMessage: 'Você não tem permissões para editar esta turma!'
+      }
+
+    }
+
+    await db.room.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        name,
+        description,
+        iconName
+      }
+    })
+
+    return {
+      success: true,
+    }
+
+  }
+
 
 }

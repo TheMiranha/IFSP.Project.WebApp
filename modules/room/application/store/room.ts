@@ -9,6 +9,7 @@ type StoreValues = {
   openEnterRoomDialog: boolean
   rooms: ComplexRoom[]
   currentRoom: ComplexRoom | null
+  currentEditRoom: ComplexRoom | null
 }
 
 type StoreFunctions = {
@@ -24,6 +25,8 @@ type StoreFunctions = {
   setRooms: (e: StoreValues['rooms']) => void
 
   setCurrentRoom: (e: StoreValues['currentRoom']) => void
+
+  setCurrentEditRoom: (e: StoreValues['currentEditRoom']) => void
 }
 
 type Store = StoreValues & StoreFunctions
@@ -35,6 +38,7 @@ const initialStoreValues = {
   openEnterRoomDialog: false,
   rooms: [],
   currentRoom: null,
+  currentEditRoom: null
 }
 
 export const useRoom = create<Store>((set) => ({
@@ -50,6 +54,8 @@ export const useRoom = create<Store>((set) => ({
 
   setRooms: (e) => set({ rooms: e }),
 
-  setCurrentRoom: (e) => set({ currentRoom: e })
+  setCurrentRoom: (e) => set({ currentRoom: e }),
+
+  setCurrentEditRoom: (e) => set({ currentEditRoom: e }),
 
 }))
