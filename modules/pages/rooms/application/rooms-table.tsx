@@ -51,7 +51,8 @@ const COLUMNS = [
     label: '',
     render: (e: WithComplexTableRow<ComplexRoom>) => <OnlyClientRoomsTableActions room={e} />,
     visible: true,
-    alignment: 'center'
+    alignment: 'center',
+    disableColumnConfiguration: true,
   }
 ] as const
 

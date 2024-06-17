@@ -8,6 +8,7 @@ export type ComplexTableColumn<TData> = {
   alignment?: HorizontalSides
   render: (e: TData) => ReactNode
   visible: boolean
+  disableColumnConfiguration?: boolean
 }
 
 export type ComplexTableHeaderAction = {

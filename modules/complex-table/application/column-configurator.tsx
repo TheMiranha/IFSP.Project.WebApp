@@ -51,7 +51,7 @@ function DraggableItem<TData extends ComplexTableRow, TColumn extends readonly C
 
   const dragControls = useDragControls()
   const y = useMotionValue(0)
-
+  if (column.disableColumnConfiguration) return false
   return (
     <Reorder.Item style={{ y }} value={column} id={column.id} className='w-full flex items-center justify-between' dragListener={false} dragControls={dragControls}>
       <div className='flex items-center gap-2'>
@@ -59,7 +59,7 @@ function DraggableItem<TData extends ComplexTableRow, TColumn extends readonly C
           dragControls.start(e);
           e.preventDefault()
         }}>
-          <GripIcon className='size-6 text-muted-foreground' />
+          <GripIcon className='size-4 text-muted-foreground' />
         </div>
         <span className='text-sm'>
           {column.label}
